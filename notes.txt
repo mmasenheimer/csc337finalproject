@@ -1,0 +1,23 @@
+User should be prompted with login page upon loading the site
+
+If user does not have account present in database, he should be able to input his information, and create one,
+which will persist to db. 
+
+User will attempt to login and query db for {user, pass} if response is null, the user or pass is wrong
+
+After the user logs in to the website, they can browse a list of products(books)
+
+The user has the option to add repeated quantities of books to their cart. Each addition should update their cart in the DB.
+
+The user also has the option to "checkout" at any given time, which will flush their current cart from the database
+
+
+
+Optional but not necessary actionable items: 
+-Reset password functionality if the user has forgotten their password
+-Individual profile page for the user 
+-Transaction history of the users recent purchases
+-User can delete his/her account
+-User can filter products list by keyword 
+-Various color theme toggling for the website (light/darkmode)
+-Add product reviews

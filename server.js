@@ -28,7 +28,7 @@ async function connectDB() {
 
 // Health check
 app.get("/", (req, res) => {
-  res.json({ message: "Bookstore API is running" });
+  res.sendFile(__dirname + "/login.html");
 });
 
 // User routes
@@ -153,3 +153,6 @@ process.on("SIGINT", async () => {
   console.log("MongoDB connection closed");
   process.exit(0);
 });
+
+
+//TODO : Split this file into multiple pieces, will become overwhelming
