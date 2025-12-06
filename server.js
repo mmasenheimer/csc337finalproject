@@ -24,7 +24,7 @@ async function connectDB() {
   }
 }
 
-// Routes
+// Routes for API calls
 
 // Health check
 app.get("/", (req, res) => {
@@ -153,6 +153,5 @@ process.on("SIGINT", async () => {
   console.log("MongoDB connection closed");
   process.exit(0);
 });
-
 
 //TODO : Split this file into multiple pieces, will become overwhelming
