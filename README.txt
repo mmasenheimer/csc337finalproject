@@ -1,14 +1,21 @@
-E-Commerce Book store website
+#  E-Commerce Book Store
 
-This is a Node.js web application built using express and MongoDB.
+## Authors
+- **Michael Masenheimer**
+- **Joe Grimes**
 
-Follow the steps below to install dependencies and run the project.
+---
+
+## 📖 Overview
+This is a Node.js web application built using **Express** and **MongoDB**.  
+It uses **JavaScript** and **HTML/CSS** for the frontend and **JavaScript** for the backend.
+
+Follow the instructions below to install and set everything up:
 
 
 
 
 
+---
 
-
-
-The application will run at http://localhost:3030
+### The application will run on localhost 3030
