@@ -51,7 +51,7 @@ app.post("/login", async (req, res) => {
     res.json({
       success: true,
       user: {
-        id: user._id.toString(),
+        id: user.userId,
         name: user.name || user.username,
       },
     });
@@ -62,10 +62,6 @@ app.post("/login", async (req, res) => {
       error: "Server error",
     });
   }
-});
-
-app.get("/home", (req, res) => {
-  res.sendFile(__dirname + "/home.html");
 });
 
 // ============ BOOK ENDPOINTS ============

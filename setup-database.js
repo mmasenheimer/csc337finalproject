@@ -28,11 +28,12 @@ db.createCollection("carts", {
           bsonType: "array",
           items: {
             bsonType: "object",
-            required: ["isbn", "title", "author"],
+            required: ["isbn", "title", "author", "price"],
             properties: {
               isbn: { bsonType: "string" },
               title: { bsonType: "string" },
               author: { bsonType: "string" },
+              price: { bsonType: "double" },
               quantity: { bsonType: "int", minimum: 1 },
             },
           },

@@ -1,7 +1,5 @@
 // carts.js file - This file houses cart and book management endpoints
 
-const { ObjectId } = require("mongodb");
-
 // Get all books -- GET ALL endpoint
 async function getAllBooks(db) {
   return await db.collection("books").find({}).toArray();
@@ -14,6 +12,8 @@ async function getBookByISBN(db, isbn) {
 
 // Ge the user's cart
 async function getUserCart(db, userId) {
+  // Convert userid strign to objectid for mongoDB query
+
   let cart = await db.collection("carts").findOne({ userId: parseInt(userId) });
 
   // If the cart doesn't exist upon function call, create an empty new one

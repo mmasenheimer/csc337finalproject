@@ -46,4 +46,6 @@ CART:
  - DELETE /api/cart/:userId/clear - Clear cart
  - GET /api/cart/:userId/total - Get cart totals
 
+Added seed.js file (populates database with sample data (useful for testing))
+
 --------------------------------------
