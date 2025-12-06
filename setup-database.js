@@ -1,25 +1,68 @@
-// Create collections
+//User setup
 db.createCollection("users", {
   validator: {
     $jsonSchema: {
       bsonType: "object",
-      required: ["userId", "username", "password"],
+      required: ["userId", "name", "email", "password", "type"],
       properties: {
-        userId: { bsonType: "string" },
-        username: { bsonType: "string" },
+        userId: { bsonType: "int" },
+        name: { bsonType: "string"},
+        email: { bsonType: "string" },
         password: { bsonType: "string" },
+        type : {bsonType: "string"}
       },
     },
   },
 });
 
-db.createCollection("books");
-db.createCollection("carts");
 
-db.users.createIndex({ username: 1 }, { unique: true });
-db.books.createIndex({ isbn: 1 }, { unique: true });
-db.carts.createIndex({ userId: 1 });
+//Carts setup
+//Might want to introduce totalCost: as a field here, 
+db.createCollection("carts", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["userId", "books"],
+      properties: {
+        userId: { bsonType: "int" },      
+        books: {
+          bsonType: "array",
+          items: {
+            bsonType: "object",
+            required: ["isbn", "title", "author"],
+            properties: {
+              isbn: { bsonType: "string" },
+              title: { bsonType: "string" },
+              author: { bsonType: "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+});
 
+
+//if you want to drop after editing script
+// db.tablename.drop()
+//then rerun the setup script
+
+
+//Books set up
+db.createCollection("books", {
+  validator: {
+    $jsonSchema: {
+      bsonType: "object",
+      required: ["isbn", "title", "author", "price"],
+      properties: {
+        isbn: { bsonType: "string" },
+        title: { bsonType: "string" },
+        author: { bsonType: "string" },
+        price: { bsonType: "double" }   
+      }
+    }
+  }
+});
 const bookList = [
   {
     isbn: "978-0-141-43951-8",
@@ -31,7 +74,7 @@ const bookList = [
     isbn: "978-0-544-27299-6",
     title: "The Hobbit",
     author: "J.R.R. Tolkien",
-    price: 22.00
+    price: 21.99
   },
   {
     isbn: "978-0-375-70667-7",
@@ -65,39 +108,39 @@ const bookList = [
   }
 ];
 
+const admins = [
+  {
+    userId: 1,
+    name: "Admin",
+    email: "admin@admin.com",
+    password: "admin123",
+    type: "admin"
+  },
+  {
+    userId: 2,
+    name: "Dan Smith",
+    email: "dmsith123@gmail.com",
+    password: "admin123",
+    type: "admin"
+  }
 
 
+]
+
+//Create indices for fast lookups:
+db.users.createIndex({ email: 1 }, { unique: true });
+db.books.createIndex({ isbn: 1 }, { unique: true });
+db.carts.createIndex({ userId: 1 });
 
 
-// Sample cart
-// const sampleCart = {
-//   userId: "user001",
-//   books: [
-//     {
-//       isbn: "978-0-7432-7356-5",
-//       title: "The Great Gatsby",
-//       author: "F. Scott Fitzgerald",
-//     },
-//     {
-//       isbn: "978-0-061-96436-7",
-//       title: "To Kill a Mockingbird",
-//       author: "Harper Lee",
-//     },
-//   ],
-// };
-
-// Insert samples
-// (uncomment to use them)
-// db.users.insertOne(sampleUser);
-// db.books.insertOne(sampleBook);
-// db.carts.insertOne(sampleCart);
-
-
-//if you want to drop after editing script
-// db.tablename.drop()
-//then rerun the setup script
-
-
+//insert products into books
 for (var book of bookList){
   db.books.insertOne(book)
+}
+
+console.log("length of admins" + admins.length)
+
+//insert admins into users
+for (var adm of admins){
+  db.users.insertOne(adm)
 }

@@ -1,21 +1,59 @@
 <html>
 <body style="margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;">
-  <div style="background-color: coral; width: 1000px; height: 1000px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+  <div style="background-color: coral; width: 800px; height: 800px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
 
-    <h1>Welcome to Jimmy's Big Book Emporium</h1>
-    
-    
+    <h1>Welcome to Waldo's Book Emporium</h1>
+
     <div style="background-color: grey; height: 200px; width: 200px; padding: 20px; display: flex; flex-direction: column; justify-content: center;">
-      <form style="text-align: center;">
-        <p style = "font-size: 24; color: white;">Login</p>
-        Username<input type="text"><br>
-        Password <input type="password"><br>
-        <button onclick =>Submit</button>
-      </form>
       
+      <form id="loginForm" style="text-align: center;">
+        <p style="font-size: 24px; color: white;">Login</p>
+        Email: <input type="text" name="email"><br>
+        Password: <input type="password" name="password"><br>
+        <button type="submit">Submit</button>
+      </form>
+      <p id = "errorMessage" style = "color: white; text-align: center; display: none">Invalid Email or Password, Please try again </p>
       <a href="create_new_account.html" style="text-align: center; margin-top: 10px;">Create New Account</a>
     </div>
-    
+
   </div>
+
+  <script>
+  const form = document.getElementById("loginForm");
+  var errorMessage = document.getElementById("errorMessage")
+  errorMessage.style.display = "none"
+  form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const email = form.email.value;
+  const password = form.password.value;
+
+  form.email.value = "";
+  form.password.value = "";
+
+  try {
+    const response = await fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+     if (data.success || response.ok) {
+    localStorage.setItem('userId', data.user.id);
+    localStorage.setItem('userName', data.user.name);
+    window.location.href = '/home';
+}
+    } else {
+      errorMessage.style.display = "block";
+    }
+
+  } catch (err) {
+    errorMessage.style.display = "block";
+  }
+});
+</script>
 </body>
 </html>
