@@ -12,7 +12,6 @@ The user has the option to add repeated quantities of books to their cart. Each 
 The user also has the option to "checkout" at any given time, which will flush their current cart from the database
 
 
-
 Optional but not necessary actionable items: 
 -Reset password functionality if the user has forgotten their password
 -Individual profile page for the user 
@@ -21,3 +20,30 @@ Optional but not necessary actionable items:
 -User can filter products list by keyword 
 -Various color theme toggling for the website (light/darkmode)
 -Add product reviews
+
+
+12/6 Add to Backend - Michael:
+--------------------------------------
+
+ - Added a bunch of endpoints for managing the cart and books. Changes made
+ to carts.js and server.js. It would be nice to split the server file up, it's
+ getting long and convoluted
+
+BOOKS:
+
+ - GET /api/books - gets all of the books
+ - GET /api/books/:isbn - Get single book
+ - POST /api/books - Add new book (admin)
+ - PUT /api/books/:isbn - Update book (admin)
+ - DELETE /api/books/:isbn - Delete book (admin)
+
+CART:
+
+ - GET /api/cart/:userId - Get user's cart
+ - POST /api/cart/:userId/add - Add book to cart (Body: { isbn, quantity })
+ - PUT /api/cart/:userId/update - Update item quantity (Body: { isbn, quantity })
+ - DELETE /api/cart/:userId/remove/:isbn - Remove item
+ - DELETE /api/cart/:userId/clear - Clear cart
+ - GET /api/cart/:userId/total - Get cart totals
+
+--------------------------------------
