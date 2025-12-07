@@ -1,6 +1,6 @@
 const express = require("express");
 const { connectDB, getDB, client } = require("./db");
-const { attemptLogin } = require("./user");
+const { attemptLogin } = require("./services/user");
 
 const {
   getUserCart,
@@ -9,7 +9,7 @@ const {
   addToCart,
   clearCart,
   getCartTotal,
-} = require("./carts");
+} = require("./services/cart");
 
 const {
   getAllBooks,
@@ -18,7 +18,7 @@ const {
   addBook,
   updateBook,
   deleteBook,
-} = require("./book");
+} = require("./services/book");
 
 const app = express();
 const PORT = 3030;
