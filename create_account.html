@@ -1,0 +1,71 @@
+<body style="margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;">
+  <div style="background-color: coral; width: 600px; height: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    <div style="background-color: grey; height: 400px; width: 400px; padding: 20px; display: flex; flex-direction: column; justify-content: center;">
+      
+      <form id="createForm" style="color: white; width: 300px; margin: auto;">
+  <p style="font-size: 24px; color: white; text-align: center;">Enter Account Information</p>
+
+  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name">
+  </div>
+
+  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <label for="email">Email:</label>
+    <input type="text" id="email" name="email">
+  </div>
+
+  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password">
+  </div>
+
+  <div style="text-align: center;">
+    <button type="submit">Create Account</button>
+    <p style = "color: white; display: none;" id = "createError">Email already exists </p>
+  </div>
+</form>
+</div>
+  </div>
+  <script>
+  const form = document.getElementById("createForm");
+  const errorMessage = document.getElementById("createError");
+  errorMessage.style.display = "none";
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const email = form.email.value;
+    const password = form.password.value;
+    const name = form.name.value;
+
+    form.email.value = "";
+    form.password.value = "";
+    form.name.value = "";
+
+    try {
+      const response = await fetch("/create_account", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        errorMessage.style.display = "block";
+        return;
+      }
+
+      errorMessage.style.display = "none";
+
+      window.location.href = "/";
+      // option B: show success
+      alert("Account successfully created!");
+
+    } catch (err) {
+      alert("Unable to connect to server.");
+    }
+  });
+</script>
+      

@@ -1,6 +1,6 @@
 const express = require("express");
 const { connectDB, getDB, client } = require("./db");
-const { attemptLogin } = require("./services/user");
+const { attemptLogin, getLastUserId, checkForExisting, createAccount } = require("./services/user");
 
 const {
   getUserCart,
@@ -14,7 +14,6 @@ const {
 const {
   getAllBooks,
   getBookByISBN,
-  addBook,
   addBook,
   updateBook,
   deleteBook,
@@ -34,6 +33,10 @@ app.get("/", (req, res) => {
 
 app.get("/home", (req, res) => {
   res.sendFile(__dirname + "/home.html");
+});
+
+app.get("/create_account", (req, res) => {
+  res.sendFile(__dirname + "/create_account.html");
 });
 
 // ============ AUTH ENDPOINTS ============
@@ -67,6 +70,43 @@ app.post("/login", async (req, res) => {
     });
   }
 });
+
+//attempt account creation
+app.post("/create_account", async (req, res) => {
+  const { name, email, password } = req.body;
+  const db = getDB(); // however you get your DB instance
+
+  try {
+    const existing = await checkForExisting(db, email);
+    // check if email already exists
+    if (existing) {
+      return res.status(401).json({
+        success: false,
+        error: "Account already exists",
+      });
+    }
+    // Otherwise create the account
+    try {
+      await createAccount(db, name, email, password);
+      return res.json({
+        success: true,
+        message: "Account created successfully",
+      });
+
+    } catch (err) {
+      return res.status(500).json({
+        success: false,
+        error: "Failed to create account",
+      });
+    }
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: "Database error",
+    });
+  }
+});
+
 
 // ============ BOOK ENDPOINTS ============
 

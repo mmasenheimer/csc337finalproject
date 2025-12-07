@@ -5,7 +5,7 @@ db.createCollection("users", {
       bsonType: "object",
       required: ["userId", "name", "email", "password", "type"],
       properties: {
-        userId: { bsonType: "int" },
+        userId: { bsonType: "number" },
         name: { bsonType: "string" },
         email: { bsonType: "string" },
         password: { bsonType: "string" },
@@ -42,6 +42,7 @@ db.createCollection("carts", {
     },
   },
 });
+
 
 //if you want to drop after editing script
 // db.tablename.drop()
