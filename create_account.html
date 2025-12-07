@@ -23,6 +23,7 @@
   <div style="text-align: center;">
     <button type="submit">Create Account</button>
     <p style = "color: white; display: none;" id = "createError">Email already exists </p>
+    <p style = "color: white; display: none;" id = "useAllFields">Please valid fields</p>
   </div>
 </form>
 </div>
@@ -42,6 +43,12 @@
     form.email.value = "";
     form.password.value = "";
     form.name.value = "";
+
+    if (!email || !password || !name || !email.includes('@')){
+        var useFields = document.getElementById("useAllFields")
+        useFields.style.display = "block"
+        return
+    }
 
     try {
       const response = await fetch("/create_account", {
