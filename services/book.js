@@ -1,55 +1,19 @@
-// Book.js file - this houses all book endpoints
+// services/book.js
+// Handles all book-related database operations
 
-// Get all books -- GET ALL endpoint
+// Get all books
 async function getAllBooks(db) {
   return await db.collection("books").find({}).toArray();
 }
 
-// Get book by ISBN number -- FIND ONE endpoint
+// Get book by ISBN
 async function getBookByISBN(db, isbn) {
   return await db.collection("books").findOne({ isbn: isbn });
 }
 
-// Add a book to the cart
-async function addToCart(db, userId, bookData) {
-  const { isbn, quantity = 1 } = bookData;
-
-  const book = await getBookByISBN(db, isbn);
-
-  // Make sure the book requested actually exists
-  if (!book) {
-    throw new Error("Book not found");
-  }
-
-  const cart = await getUserCart(db, userId);
-
-  // Check if the book is already in the cart, update quantity as needed
-  const existingBookIndex = cart.books.findIndex((b) => b.isbn === isbn);
-
-  if (existingBookIndex !== -1) {
-    // Update the quantity of that book
-    cart.books[existingBookIndex].quantity += quantity;
-  } else {
-    // Add the new book to the cart
-    cart.books.push({
-      isbn: book.isbn,
-      title: book.title,
-      author: book.author,
-      price: book.price,
-      quantity: quantity,
-    });
-  }
-
-  await db
-    .collection("carts")
-    .updateOne({ userId: parseInt(userId) }, { $set: { books: cart.books } });
-
-  return cart;
-}
-
-// ADMIN PROPERTY: Add new book
+// Add a new book (ADMIN)
 async function addBook(db, bookData) {
-  const { isbn, title, author, price } = bookData;
+  const { isbn, title, author, price, imageUrl } = bookData;
 
   // Check if book already exists
   const existing = await getBookByISBN(db, isbn);
@@ -62,20 +26,22 @@ async function addBook(db, bookData) {
     title,
     author,
     price: parseFloat(price),
+    imageUrl: imageUrl
   };
 
   await db.collection("books").insertOne(book);
   return book;
 }
 
-// ADMIN PROPERTY: Update book
+// Update an existing book (ADMIN)
 async function updateBook(db, isbn, updateData) {
-  const { title, author, price } = updateData;
+  const { title, author, price, imageUrl } = updateData;
 
   const updates = {};
-  if (title) updates.title = title;
-  if (author) updates.author = author;
+  if (title !== undefined) updates.title = title;
+  if (author !== undefined) updates.author = author;
   if (price !== undefined) updates.price = parseFloat(price);
+  if (imageUrl !== undefined) updates.imageUrl = imageUrl;
 
   const result = await db
     .collection("books")
@@ -88,7 +54,7 @@ async function updateBook(db, isbn, updateData) {
   return await getBookByISBN(db, isbn);
 }
 
-// ADMIN PROPERTY: Delete book
+// Delete a book (ADMIN)
 async function deleteBook(db, isbn) {
   const result = await db.collection("books").deleteOne({ isbn: isbn });
 
@@ -96,7 +62,7 @@ async function deleteBook(db, isbn) {
     throw new Error("Book not found");
   }
 
-  // Also remove from all carts
+  // Remove this book from all carts
   await db
     .collection("carts")
     .updateMany({}, { $pull: { books: { isbn: isbn } } });
@@ -107,7 +73,6 @@ async function deleteBook(db, isbn) {
 module.exports = {
   getAllBooks,
   getBookByISBN,
-  addToCart,
   addBook,
   updateBook,
   deleteBook,

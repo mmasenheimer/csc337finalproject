@@ -1,77 +1,198 @@
-<body style="margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh;">
-  <div style="background-color: coral; width: 600px; height: 600px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-    <div style="background-color: grey; height: 400px; width: 400px; padding: 20px; display: flex; flex-direction: column; justify-content: center;">
-      
-      <form id="createForm" style="color: white; width: 300px; margin: auto;">
-  <p style="font-size: 24px; color: white; text-align: center;">Enter Account Information</p>
-
-  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name">
-  </div>
-
-  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-    <label for="email">Email:</label>
-    <input type="text" id="email" name="email">
-  </div>
-
-  <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
-    <label for="password">Password:</label>
-    <input type="password" id="password" name="password">
-  </div>
-
-  <div style="text-align: center;">
-    <button type="submit">Create Account</button>
-    <p style = "color: white; display: none;" id = "createError">Email already exists </p>
-    <p style = "color: white; display: none;" id = "useAllFields">Please valid fields</p>
-  </div>
-</form>
-</div>
-  </div>
-  <script>
-  const form = document.getElementById("createForm");
-  const errorMessage = document.getElementById("createError");
-  errorMessage.style.display = "none";
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const email = form.email.value;
-    const password = form.password.value;
-    const name = form.name.value;
-
-    form.email.value = "";
-    form.password.value = "";
-    form.name.value = "";
-
-    if (!email || !password || !name || !email.includes('@')){
-        var useFields = document.getElementById("useAllFields")
-        useFields.style.display = "block"
-        return
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Account - Waldo's Book Emporium</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #ff9966, #ff5e62); /* same vibe as login */
     }
 
-    try {
-      const response = await fetch("/create_account", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
-      });
+    .wrapper {
+      text-align: center;
+    }
 
-      const data = await response.json();
+    h1 {
+      margin-bottom: 20px;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
 
-      if (!data.success) {
-        errorMessage.style.display = "block";
+    .card {
+      background-color: #333;
+      width: 340px;
+      padding: 24px 28px;
+      border-radius: 10px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      color: #ffffff;
+    }
+
+    .card h2 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+    }
+
+    .form-group {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 14px;
+    }
+
+    .form-group label {
+      font-weight: 600;
+    }
+
+    .form-group input {
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      background: #222;
+      color: #fff;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #ff9966;
+    }
+
+    button[type="submit"] {
+      margin-top: 8px;
+      padding: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #ff9966;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #ff7b3a;
+    }
+
+    .message {
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    #createError {
+      display: none;
+    }
+
+    #useAllFields {
+      display: none;
+    }
+
+    .link-back {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #ffcc99;
+      text-decoration: none;
+    }
+
+    .link-back:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrapper">
+    <h1>Waldo's Book Emporium</h1>
+
+    <div class="card">
+      <h2>Create Account</h2>
+
+      <form id="createForm">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name">
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="text" id="email" name="email">
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password">
+        </div>
+
+        <button type="submit">Create Account</button>
+
+        <p class="message" id="useAllFields">Please enter all fields and a valid email.</p>
+        <p class="message" id="createError">Email already exists.</p>
+      </form>
+
+      <a class="login" href="/">Back to Login</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("createForm");
+    const errorMessage = document.getElementById("createError");
+    const fieldsMessage = document.getElementById("useAllFields");
+
+    // Hide messages initially
+    errorMessage.style.display = "none";
+    fieldsMessage.style.display = "none";
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const email = form.email.value.trim();
+      const password = form.password.value.trim();
+      const name = form.name.value.trim();
+
+      // Reset messages
+      errorMessage.style.display = "none";
+      fieldsMessage.style.display = "none";
+
+      if (!email || !password || !name || !email.includes('@')) {
+        fieldsMessage.style.display = "block";
         return;
       }
 
-      errorMessage.style.display = "none";
+      // Optionally clear the fields after validation
+      form.email.value = "";
+      form.password.value = "";
+      form.name.value = "";
 
-      window.location.href = "/";
-      alert("Account successfully created!");
+      try {
+        const response = await fetch("/create_account", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, password })
+        });
 
-    } catch (err) {
-      alert("Unable to connect to server.");
-    }
-  });
-</script>
-      
+        const data = await response.json();
+
+        if (!data.success) {
+          errorMessage.style.display = "block";
+          return;
+        }
+
+        // Success: go back to login
+        alert("Account successfully created! Please log in.");
+        window.location.href = "/";
+
+      } catch (err) {
+        alert("Unable to connect to server.");
+      }
+    });
+  </script>
+</body>
+</html>

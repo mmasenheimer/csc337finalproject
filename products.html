@@ -1,69 +1,340 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Products</title>
+  <meta charset="UTF-8">
+  <title>Books</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    /* NAV BAR */
+    .navbar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      padding: 15px 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      background: rgba(255, 153, 102, 0.90);
+      backdrop-filter: blur(4px);
+      border-bottom-left-radius: 10px;
+      z-index: 1000;
+    }
+
+    .nav-item {
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .nav-item:hover {
+      text-decoration: underline;
+    }
+
+    /* ADMIN DROPDOWN PANEL (same as home) */
+    .admin-panel {
+      position: absolute;
+      top: 60px;
+      right: 10px;
+      width: 220px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      padding: 15px;
+      display: none;
+    }
+
+    .admin-panel input {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+    }
+
+    .admin-panel button {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      background-color: #ff9966;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .admin-panel button:hover {
+      background-color: #ff7b3a;
+    }
+
+    #adminMsg {
+      margin-top: 6px;
+      font-size: 14px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* PAGE LAYOUT */
+    .page-container {
+      max-width: 1100px;
+      margin: 120px auto 40px auto;
+      padding: 0 15px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* BOOK GRID */
+    #books {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .book-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .book-card img {
+      width: 150px;
+      height: auto;
+      border-radius: 6px;
+      margin: 0 auto 8px auto;
+      object-fit: cover;
+    }
+
+    .book-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .book-author {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .book-isbn {
+      margin: 0;
+      font-size: 12px;
+      color: #777;
+    }
+
+    .book-price {
+      margin-top: 6px;
+      font-weight: bold;
+      font-size: 16px;
+    }
+
+    .btn {
+      padding: 8px 10px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .btn-add {
+      background-color: #ff9966;
+      color: white;
+      margin-top: 6px;
+    }
+
+    .btn-add:hover {
+      background-color: #ff7b3a;
+    }
+
+    #errorMsg {
+      text-align: center;
+      margin-top: 20px;
+      color: red;
+      font-weight: bold;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Books</h1>
-  <button onclick="window.location.href='/home'">Back</button>
-  <button onclick = "window.location.href = '/checkout'" style = "float: right;">Checkout</button>
-  <div id="books"></div>
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <a class="nav-item" href="/home">Home</a>
+    <a class="nav-item" href="/products">Products</a>
+    <a class="nav-item" href="/checkout">Cart</a>
+    <a class="nav-item" href="/profile">Profile</a>
+    <span class="nav-item" id="adminNavBtn">Admin</span>
+  </div>
+
+  <!-- ADMIN DROPDOWN -->
+  <div class="admin-panel" id="adminPanel">
+    <input id="adminCode" type="password" placeholder="Enter admin code">
+    <button id="adminLoginBtn">Go to Admin</button>
+    <p id="adminMsg"></p>
+  </div>
+
+  <div class="page-container">
+    <h1>Available Books</h1>
+    <div id="books"></div>
+    <p id="errorMsg" style="display:none;"></p>
+  </div>
 
   <script>
+    // -------- LOGIN GUARD --------
     const userId = localStorage.getItem('userId');
-    if (!userId) window.location.href = '/';
-
-    // Fetch books
-    fetch('/api/books')
-  .then(res => res.json())
-  .then(data => {
-    const booksDiv = document.getElementById('books');
-    
-    if (data.success) {
-      let html = '';
-      
-      for (let i = 0; i < data.books.length; i++) {
-        const book = data.books[i];
-        
-        //can organize this better, maybe make a 3x3 grid of books
-        html += '<div style="border: 1px solid black; padding: 10px; margin: 10px;">';
-        html += '<img src="' + book.imageUrl + '" style="width: 150px; height: auto;">';
-        html += '<h3>' + book.title + '</h3>';
-        html += '<p>Author: ' + book.author + '</p>';
-        html += '<p>Price: $' + book.price + '</p>';
-        html += '<p>ISBN: ' + book.isbn + '</p>';
-        html += '<button onclick="addToCart(\'' + book.isbn + '\', \'' + book.title + '\', \'' + book.author + '\', ' + book.price + ')">';
-        html += 'Add to Cart';
-        html += '</button>';
-        html += '</div>';
-      }
-      
-      booksDiv.innerHTML = html;
-    } else {
-      booksDiv.innerHTML = '<p>No books found</p>';
+    if (!userId) {
+      window.location.href = '/';
     }
-  })
-  .catch(err => {
-    console.error(err);
-    document.getElementById('books').innerHTML = '<p>Error loading books</p>';
-  });
 
-    function addToCart(isbn, title, author, price) {
+    // -------- ADMIN DROPDOWN (same logic as home.html) --------
+    const adminBtn   = document.getElementById('adminNavBtn');
+    const adminPanel = document.getElementById('adminPanel');
+    const adminMsg   = document.getElementById('adminMsg');
+
+    adminBtn.addEventListener("click", () => {
+      adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
+      adminMsg.textContent = "";
+      adminMsg.style.color = "";
+      document.getElementById('adminCode').value = '';
+    });
+
+    document.getElementById('adminLoginBtn').addEventListener('click', () => {
+      const code = document.getElementById('adminCode').value.trim();
+
+      if (code === '3030') {
+        window.location.href = '/admin';
+      } else {
+        adminMsg.textContent = "✖ Incorrect code.";
+        adminMsg.style.color = "red";
+      }
+    });
+
+    // -------- BOOK DISPLAY & ADD TO CART --------
+    const booksDiv = document.getElementById('books');
+    const errorMsg = document.getElementById('errorMsg');
+
+    function renderBooks(books) {
+      booksDiv.innerHTML = "";
+      if (!books || books.length === 0) {
+        errorMsg.style.display = "block";
+        errorMsg.textContent = "No books found.";
+        return;
+      }
+
+      errorMsg.style.display = "none";
+
+      books.forEach(book => {
+        const card = document.createElement('div');
+        card.className = 'book-card';
+
+        // Image
+        let src = null;
+        const raw = book.imageUrl;
+
+        if (raw) {
+          if (raw.startsWith("http") || raw.startsWith("/book_imgs/")) {
+            src = raw;
+          } else {
+            src = "/book_imgs/" + raw;
+          }
+        }
+
+        if (src) {
+          const img = document.createElement('img');
+          img.src = src;
+          img.alt = book.title + " cover";
+          card.appendChild(img);
+        }
+
+        // Title
+        const titleEl = document.createElement('h3');
+        titleEl.className = 'book-title';
+        titleEl.textContent = book.title;
+        card.appendChild(titleEl);
+
+        // Author
+        const authorEl = document.createElement('p');
+        authorEl.className = 'book-author';
+        authorEl.textContent = "by " + book.author;
+        card.appendChild(authorEl);
+
+        // ISBN
+        const isbnEl = document.createElement('p');
+        isbnEl.className = 'book-isbn';
+        isbnEl.textContent = "ISBN: " + book.isbn;
+        card.appendChild(isbnEl);
+
+        // Price
+        const priceEl = document.createElement('p');
+        priceEl.className = 'book-price';
+        priceEl.textContent = "$" + Number(book.price).toFixed(2);
+        card.appendChild(priceEl);
+
+        // Add to cart button
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-add';
+        btn.textContent = "Add to Cart";
+        btn.addEventListener('click', () => addToCart(book.isbn));
+        card.appendChild(btn);
+
+        booksDiv.appendChild(card);
+      });
+    }
+
+    function loadBooks() {
+      fetch('/api/books')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            renderBooks(data.books);
+          } else {
+            errorMsg.style.display = "block";
+            errorMsg.textContent = "Failed to load books.";
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          errorMsg.style.display = "block";
+          errorMsg.textContent = "Error loading books.";
+        });
+    }
+
+    function addToCart(isbn) {
       fetch(`/api/cart/${userId}/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ isbn, title, author, price, quantity: 1 })
+        body: JSON.stringify({ isbn, quantity: 1 })
       })
       .then(res => res.json())
       .then(data => {
         if (data.success) {
           alert('Added to cart!');
         } else {
-          alert('Failed: ' + data.error);
+          alert('Failed: ' + (data.error || 'Unknown error'));
         }
       })
-      .catch(err => alert('Error: ' + err));
+      .catch(err => {
+        console.error(err);
+        alert('Error: ' + err);
+      });
     }
+
+    loadBooks();
   </script>
 </body>
 </html>

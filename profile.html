@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Your Profile</title>
+	<style>
+		body {
+			margin: 0;
+			font-family: Arial, Helvetica, sans-serif;
+			background-color: #f5f5f5;
+		}
+
+		/* NAVBAR */
+		.navbar {
+			position: fixed;
+			top: 0;
+			right: 0;
+			padding: 15px 20px;
+			display: flex;
+			gap: 20px;
+			align-items: center;
+			background: rgba(255, 153, 102, 0.90);
+			backdrop-filter: blur(4px);
+			border-bottom-left-radius: 10px;
+			z-index: 1000;
+		}
+
+		.nav-item {
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+			text-decoration: none;
+		}
+
+		.nav-item:hover {
+			text-decoration: underline;
+		}
+
+		.container {
+			max-width: 650px;
+			margin: 120px auto 40px auto;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+			padding: 25px;
+		}
+
+		h1 {
+			text-align: center;
+			margin-top: 0;
+			margin-bottom: 20px;
+		}
+
+		.section-title {
+			margin-top: 25px;
+			margin-bottom: 10px;
+			font-size: 18px;
+			font-weight: bold;
+			border-bottom: 1px solid #eee;
+			padding-bottom: 4px;
+		}
+
+		.profile-row {
+			margin-bottom: 8px;
+		}
+
+		.label {
+			font-weight: bold;
+		}
+
+		input[type="text"],
+		input[type="email"],
+		input[type="password"] {
+			width: 100%;
+			padding: 8px;
+			margin-top: 4px;
+			margin-bottom: 10px;
+			border-radius: 5px;
+			border: 1px solid #ccc;
+			box-sizing: border-box;
+		}
+
+		button {
+			padding: 10px 14px;
+			border-radius: 6px;
+			border: none;
+			cursor: pointer;
+			font-size: 15px;
+		}
+
+		.btn-primary {
+			background-color: #ff9966;
+			color: white;
+		}
+
+		.btn-primary:hover {
+			background-color: #ff7b3a;
+		}
+
+		.btn-danger {
+			background-color: #444;
+			color: white;
+			width: 100%;
+			margin-top: 15px;
+		}
+
+		.btn-danger:hover {
+			background-color: #222;
+		}
+
+		#msg {
+			margin-top: 10px;
+			font-weight: bold;
+			text-align: center;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- NAVBAR -->
+	<div class="navbar">
+		<a class="nav-item" href="/home">Home</a>
+		<a class="nav-item" href="/products">Products</a>
+		<a class="nav-item" href="/checkout">Cart</a>
+		<a class="nav-item" href="/profile">Profile</a>
+	</div>
+
+	<div class="container">
+		<h1>Your Profile</h1>
+
+		<!-- Basic info display -->
+		<div class="profile-row">
+			<span class="label">Name:</span>
+			<span id="profileName"></span>
+		</div>
+
+		<div class="profile-row">
+			<span class="label">User ID:</span>
+			<span id="profileId"></span>
+		</div>
+
+		<div class="profile-row">
+			<span class="label">Email:</span>
+			<span id="profileEmail"></span>
+		</div>
+
+		<!-- Update Email -->
+		<div class="section-title">Update Email</div>
+		<p style="color:#666; font-size: 14px;">
+			Enter a new email address below. You’ll be asked to confirm before it’s changed.
+		</p>
+		<input id="newEmail" type="email" placeholder="New email address">
+
+		<button class="btn-primary" id="updateEmailBtn">Update Email</button>
+
+		<!-- Change Password -->
+		<div class="section-title">Change Password</div>
+		<p style="color:#666; font-size: 14px;">
+			To change your password, please enter your current password and your new password twice.
+		</p>
+
+		<label class="label" for="oldPassword">Current Password</label>
+		<input id="oldPassword" type="password" placeholder="Current password">
+
+		<label class="label" for="newPassword">New Password</label>
+		<input id="newPassword" type="password" placeholder="New password">
+
+		<label class="label" for="confirmPassword">Confirm New Password</label>
+		<input id="confirmPassword" type="password" placeholder="Confirm new password">
+
+		<button class="btn-primary" id="updatePasswordBtn">Change Password</button>
+
+		<div id="msg"></div>
+
+		<button class="btn-danger" id="logoutBtn">Logout</button>
+	</div>
+
+	<script>
+		const userId = localStorage.getItem("userId");
+		const userName = localStorage.getItem("userName");
+
+		if (!userId || !userName) {
+			window.location.href = "/";
+		}
+
+		const profileNameEl = document.getElementById("profileName");
+		const profileIdEl = document.getElementById("profileId");
+		const profileEmailEl = document.getElementById("profileEmail");
+		const msgEl = document.getElementById("msg");
+
+		profileNameEl.textContent = userName;
+		profileIdEl.textContent = userId;
+
+		function setMsg(text, color = "#000") {
+			msgEl.textContent = text;
+			msgEl.style.color = color;
+		}
+
+		// Load user info (especially email) from the server
+		// You need to implement GET /api/users/:userId on the backend
+		function loadUserProfile() {
+			fetch(`/api/users/${userId}`)
+				.then(res => res.json())
+				.then(data => {
+					if (data.success && data.user) {
+						const user = data.user;
+						// If backend name changes, update local displayed name too
+						profileNameEl.textContent = user.name || user.username || userName;
+						profileEmailEl.textContent = user.email || "(no email on file)";
+					} else {
+						console.error("Failed to load user profile:", data.error);
+					}
+				})
+				.catch(err => {
+					console.error("Error loading user profile:", err);
+				});
+		}
+
+		loadUserProfile();
+
+		// Update email flow
+		document.getElementById("updateEmailBtn").addEventListener("click", () => {
+			const newEmail = document.getElementById("newEmail").value.trim();
+			if (!newEmail) {
+				return setMsg("Please enter a new email.", "red");
+			}
+
+			// confirmation dialog
+			const sure = confirm(`Are you sure you want to change your email to:\n\n${newEmail}?`);
+			if (!sure) {
+				return;
+			}
+
+			// You need to implement PUT /api/users/:userId/email on the backend
+			fetch(`/api/users/${userId}/email`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ newEmail })
+			})
+				.then(res => res.json())
+				.then(data => {
+					if (data.success) {
+						setMsg("Email updated successfully.", "green");
+						document.getElementById("newEmail").value = "";
+						loadUserProfile();
+					} else {
+						setMsg(data.error || "Failed to update email.", "red");
+					}
+				})
+				.catch(err => {
+					console.error("Error updating email:", err);
+					setMsg("Server error updating email.", "red");
+				});
+		});
+
+		// Update password flow
+		document.getElementById("updatePasswordBtn").addEventListener("click", () => {
+			const oldPassword = document.getElementById("oldPassword").value.trim();
+			const newPassword = document.getElementById("newPassword").value.trim();
+			const confirmPass = document.getElementById("confirmPassword").value.trim();
+
+			if (!oldPassword || !newPassword || !confirmPass) {
+				return setMsg("Please fill in all password fields.", "red");
+			}
+
+			if (newPassword !== confirmPass) {
+				return setMsg("New passwords do not match.", "red");
+			}
+
+			// You need to implement PUT /api/users/:userId/password on the backend
+			fetch(`/api/users/${userId}/password`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ oldPassword, newPassword })
+			})
+				.then(res => res.json())
+				.then(data => {
+					if (data.success) {
+						setMsg("Password updated successfully.", "green");
+						document.getElementById("oldPassword").value = "";
+						document.getElementById("newPassword").value = "";
+						document.getElementById("confirmPassword").value = "";
+					} else {
+						setMsg(data.error || "Failed to update password.", "red");
+					}
+				})
+				.catch(err => {
+					console.error("Error updating password:", err);
+					setMsg("Server error updating password.", "red");
+				});
+		});
+
+		// Logout
+		document.getElementById("logoutBtn").addEventListener("click", () => {
+			localStorage.removeItem("userId");
+			localStorage.removeItem("userName");
+			window.location.href = "/";
+		});
+	</script>
+
+</body>
+
+</html>
