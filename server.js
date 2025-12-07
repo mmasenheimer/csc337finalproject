@@ -3,18 +3,22 @@ const { connectDB, getDB, client } = require("./db");
 const { attemptLogin } = require("./user");
 
 const {
-  getAllBooks,
-  getBookByISBN,
   getUserCart,
-  addToCart,
   updateCartItemQuantity,
   removeFromCart,
+  addToCart,
   clearCart,
   getCartTotal,
+} = require("./carts");
+
+const {
+  getAllBooks,
+  getBookByISBN,
+  addBook,
   addBook,
   updateBook,
   deleteBook,
-} = require("./carts");
+} = require("./book");
 
 const app = express();
 const PORT = 3030;
