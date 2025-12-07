@@ -48,4 +48,41 @@ CART:
 
 Added seed.js file (populates database with sample data (useful for testing))
 
+12/7 Frontend & Seeding Updates - Kyle:
 --------------------------------------
+
+ - Implemented styled login and account creation pages, wired to /login and /create_account
+   so new users are persisted in the users collection and invalid logins are handled with
+   an error message.
+
+ - Built a unified Home page (home.html) with a top-right navbar (Products, Cart, Profile,
+   Admin) and consistent button styling; user is greeted by name using data from localStorage.
+
+ - Added an Admin access flow using a navbar "Admin" dropdown that prompts for a code (3030).
+   On success, user is redirected to /admin.
+
+ - Created an Admin Dashboard (admin.html) that allows full book management using the existing
+   /api/books endpoints:
+      * Add new books (ISBN, title, author, price, image filename)
+      * Load a book by ISBN into the form
+      * Update an existing book
+      * Delete a book
+   Also displays a live list of current books in the database.
+
+ - Redesigned products page (products.html) to show books in a responsive card grid with cover
+   images (served from /book_imgs), title, author, price, and an “Add to Cart” button that
+   calls POST /api/cart/:userId/add.
+
+ - Implemented a cart page (cart.html) layout that pulls the user’s cart from
+   GET /api/cart/:userId, shows each item with its image, info, and quantity input, and uses
+   the cart endpoints to update quantities, remove items, and compute totals via
+   GET /api/cart/:userId/total.
+
+ - Added a profile page (profile.html) skeleton that allows the user to view/update profile
+   information (email/password) with confirmation steps (old password for password change,
+   confirmation dialog for email change).
+
+ - Added a defaultBooks array and ensureSeedBooks() logic to server.js so that on startup,
+   if the books collection is empty, it is automatically populated with a fixed set of
+   sample books (The Stand, No Country for Old Men, The Martian, The Hobbit, The Grapes
+   of Wrath, Dune, 1984) with matching cover images in the book_imgs directory.

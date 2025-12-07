@@ -1,33 +1,206 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>Home</title>
-</head>
-<body>
-  <h1 id="welcomeMessage">Welcome!</h1>
-  <p>You have successfully logged in.</p>
-  <button id="logoutBtn">Logout</button>
 
-   <a href = "products">View Products </a>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    /* NAV BAR */
+    .navbar {
+      position: fixed;
+      top: 0;
+      right: 0;
+      padding: 15px 20px;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      background: rgba(255, 153, 102, 0.85);
+      backdrop-filter: blur(5px);
+      border-bottom-left-radius: 10px;
+      z-index: 1000;
+    }
+
+    .nav-item {
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .nav-item:hover {
+      text-decoration: underline;
+    }
+
+    /* ADMIN DROPDOWN PANEL */
+    .admin-panel {
+      position: absolute;
+      top: 60px;
+      right: 10px;
+      width: 220px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      padding: 15px;
+      display: none;
+    }
+
+    .admin-panel input {
+      width: 100%;
+      padding: 6px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+    }
+
+    .admin-panel button {
+      width: 100%;
+      padding: 8px;
+      border: none;
+      border-radius: 5px;
+      background-color: #ff9966;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .admin-panel button:hover {
+      background-color: #ff7b3a;
+    }
+
+    #adminMsg {
+      margin-top: 6px;
+      font-size: 14px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    /* MAIN CONTENT CARD */
+    .container {
+      max-width: 600px;
+      margin: 120px auto 0 auto;
+      padding: 25px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    /* UNIVERSAL BUTTON CLASS */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 6px;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+      box-sizing: border-box;
+    }
+
+    /* Dark logout button */
+    .btn-dark {
+      background-color: #444;
+      color: white;
+    }
+
+    .btn-dark:hover {
+      background-color: #222;
+    }
+
+    /* Orange products button */
+    .btn-orange {
+      background-color: #ff9966;
+      color: white;
+    }
+
+    .btn-orange:hover {
+      background-color: #ff7b3a;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP NAV BAR -->
+  <div class="navbar">
+    <a class="nav-item" href="/products">Products</a>
+    <a class="nav-item" href="/checkout">Cart</a>
+    <a class="nav-item" href="/profile">Profile</a>
+    <span class="nav-item" id="adminNavBtn">Admin</span>
+  </div>
+
+  <!-- ADMIN DROPDOWN -->
+  <div class="admin-panel" id="adminPanel">
+    <input id="adminCode" type="password" placeholder="Enter admin code">
+    <button id="adminLoginBtn">Go to Admin</button>
+    <p id="adminMsg"></p>
+  </div>
+
+  <!-- MAIN CONTENT CARD -->
+  <div class="container">
+    <h1 id="welcomeMessage">Welcome!</h1>
+    <p style="text-align:center;">You have successfully logged in.</p>
+
+    <!-- LOGOUT NOW AN <a> -->
+    <a id="logoutBtn" class="btn btn-dark">Logout</a>
+
+    <!-- PRODUCTS BUTTON SAME SIZE -->
+    <a href="/products" class="btn btn-orange">View Products</a>
+  </div>
+
   <script>
     const userId = localStorage.getItem('userId');
     const userName = localStorage.getItem('userName');
-    console.log("userId" + userId)
-    console.log("userName" + userName)
+
     if (!userId || !userName) {
       window.location.href = '/';
-    } else {
-      document.getElementById('welcomeMessage').textContent = `Welcome, ${userName}!`;
-    
-      console.log('User ID:', userId);
     }
 
+    document.getElementById('welcomeMessage').textContent = `Welcome, ${userName}!`;
 
+    const adminBtn   = document.getElementById('adminNavBtn');
+    const adminPanel = document.getElementById('adminPanel');
+    const adminMsg   = document.getElementById('adminMsg');
+
+    // Toggle dropdown for Admin
+    adminBtn.addEventListener("click", () => {
+      adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
+      adminMsg.textContent = "";
+      adminMsg.style.color = "";
+      document.getElementById('adminCode').value = '';
+    });
+
+    // Validate admin code
+    document.getElementById('adminLoginBtn').addEventListener('click', () => {
+      const code = document.getElementById('adminCode').value.trim();
+
+      if (code === '3030') {
+        window.location.href = '/admin';
+      } else {
+        adminMsg.textContent = "✖ Incorrect code.";
+        adminMsg.style.color = "red";
+      }
+    });
+
+    // Logout
     document.getElementById('logoutBtn').addEventListener('click', () => {
-      localStorage.removeItem('userId');
-      localStorage.removeItem('userName');
+      localStorage.clear();
       window.location.href = '/';
     });
   </script>
+
 </body>
 </html>

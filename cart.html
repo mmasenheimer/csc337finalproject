@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Your Cart</title>
+	<style>
+		body {
+			margin: 0;
+			font-family: Arial, Helvetica, sans-serif;
+			background-color: #f5f5f5;
+		}
+
+		/* NAVBAR */
+		.navbar {
+			position: fixed;
+			top: 0;
+			right: 0;
+			padding: 15px 20px;
+			display: flex;
+			gap: 20px;
+			align-items: center;
+			background: rgba(255, 153, 102, 0.90);
+			backdrop-filter: blur(4px);
+			border-bottom-left-radius: 10px;
+			z-index: 1000;
+		}
+
+		.nav-item {
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+			text-decoration: none;
+		}
+
+		.nav-item:hover {
+			text-decoration: underline;
+		}
+
+		/* LAYOUT */
+		.page-container {
+			max-width: 1100px;
+			margin: 120px auto 40px auto;
+			padding: 0 15px;
+		}
+
+		h1 {
+			margin-top: 0;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+
+		.layout-grid {
+			display: grid;
+			grid-template-columns: 2fr 1fr;
+			gap: 24px;
+		}
+
+		/* CART ITEMS */
+		#cartItems {
+			display: flex;
+			flex-direction: column;
+			gap: 15px;
+		}
+
+		.cart-card {
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+			padding: 12px;
+			display: flex;
+			gap: 16px;
+			align-items: flex-start;
+		}
+
+		.cart-card img {
+			width: 90px;
+			height: auto;
+			border-radius: 6px;
+			object-fit: cover;
+			flex-shrink: 0;
+		}
+
+		.cart-info {
+			flex: 1;
+		}
+
+		.cart-title {
+			margin: 0 0 4px 0;
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		.cart-author {
+			margin: 0 0 4px 0;
+			color: #555;
+			font-size: 14px;
+		}
+
+		.cart-isbn {
+			margin: 0 0 8px 0;
+			color: #777;
+			font-size: 12px;
+		}
+
+		.cart-meta {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			margin-top: 8px;
+			flex-wrap: wrap;
+		}
+
+		.price-label {
+			font-weight: bold;
+		}
+
+		.qty-group {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 14px;
+		}
+
+		.qty-group input {
+			width: 60px;
+			padding: 4px;
+			border-radius: 4px;
+			border: 1px solid #ccc;
+		}
+
+		.line-total {
+			font-weight: bold;
+			color: #333;
+		}
+
+		.remove-btn {
+			margin-left: auto;
+			padding: 6px 10px;
+			border-radius: 6px;
+			border: none;
+			background-color: #cc4444;
+			color: white;
+			cursor: pointer;
+			font-size: 13px;
+		}
+
+		.remove-btn:hover {
+			background-color: #aa3333;
+		}
+
+		#emptyMessage {
+			text-align: center;
+			margin-top: 20px;
+			font-style: italic;
+			color: #666;
+		}
+
+		/* SUMMARY CARD */
+		.summary-card {
+			background: #fff;
+			border-radius: 10px;
+			box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+			padding: 18px;
+			position: sticky;
+			top: 90px;
+			align-self: flex-start;
+		}
+
+		.summary-card h2 {
+			margin-top: 0;
+			margin-bottom: 10px;
+		}
+
+		.summary-line {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 6px;
+			font-size: 15px;
+		}
+
+		.summary-total {
+			margin-top: 12px;
+			padding-top: 8px;
+			border-top: 1px solid #eee;
+			font-size: 18px;
+			font-weight: bold;
+		}
+
+		.summary-actions {
+			margin-top: 16px;
+			display: flex;
+			flex-direction: column;
+			gap: 8px;
+		}
+
+		.btn {
+			padding: 9px 12px;
+			border-radius: 6px;
+			border: none;
+			cursor: pointer;
+			font-size: 14px;
+		}
+
+		.btn-secondary {
+			background-color: #ccc;
+			color: #222;
+		}
+
+		.btn-secondary:hover {
+			background-color: #b3b3b3;
+		}
+
+		.btn-danger {
+			background-color: #cc4444;
+			color: white;
+		}
+
+		.btn-danger:hover {
+			background-color: #aa3333;
+		}
+
+		.btn-primary {
+			background-color: #ff9966;
+			color: white;
+		}
+
+		.btn-primary:hover {
+			background-color: #ff7b3a;
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- NAVBAR -->
+	<div class="navbar">
+		<a class="nav-item" href="/home">Home</a>
+		<a class="nav-item" href="/products">Products</a>
+		<a class="nav-item" href="/checkout">Cart</a>
+		<a class="nav-item" href="/profile">Profile</a>
+	</div>
+
+	<div class="page-container">
+		<h1>Your Cart</h1>
+
+		<div class="layout-grid">
+			<!-- LEFT: CART ITEMS -->
+			<div>
+				<div id="cartItems"></div>
+				<p id="emptyMessage" style="display:none;">Your cart is empty.</p>
+			</div>
+
+			<!-- RIGHT: SUMMARY -->
+			<div class="summary-card">
+				<h2>Order Summary</h2>
+				<div class="summary-line">
+					<span>Items:</span>
+					<span id="itemCount">0</span>
+				</div>
+				<div class="summary-line">
+					<span>Subtotal:</span>
+					<span>$<span id="subtotal">0.00</span></span>
+				</div>
+
+				<div class="summary-total">
+					Total: $<span id="total">0.00</span>
+				</div>
+
+				<div class="summary-actions">
+					<button class="btn btn-secondary" onclick="window.location.href='/products'">
+						Continue Shopping
+					</button>
+					<button class="btn btn-danger" onclick="clearCart()">
+						Clear Cart
+					</button>
+					<button class="btn btn-primary" onclick="checkout()">
+						Place Order
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		const userId = localStorage.getItem("userId");
+		if (!userId) {
+			window.location.href = "/";
+		}
+
+		let cartBooks = [];
+
+		function loadCart() {
+			fetch(`/api/cart/${userId}`)
+				.then(res => res.json())
+				.then(data => {
+					if (!data.success) {
+						console.error("Failed to load cart:", data.error);
+						return;
+					}
+					cartBooks = (data.cart && data.cart.books) ? data.cart.books : [];
+					renderCart();
+				})
+				.catch(err => console.error("Error loading cart:", err));
+		}
+
+		function renderCart() {
+			const container = document.getElementById("cartItems");
+			const emptyMsg = document.getElementById("emptyMessage");
+			const itemCountEl = document.getElementById("itemCount");
+			const subtotalEl = document.getElementById("subtotal");
+			const totalEl = document.getElementById("total");
+
+			container.innerHTML = "";
+
+			if (cartBooks.length === 0) {
+				emptyMsg.style.display = "block";
+				itemCountEl.textContent = "0";
+				subtotalEl.textContent = "0.00";
+				totalEl.textContent = "0.00";
+				return;
+			}
+
+			emptyMsg.style.display = "none";
+
+			let subtotal = 0;
+			let totalItems = 0;
+
+			cartBooks.forEach(book => {
+				const card = document.createElement("div");
+				card.className = "cart-card";
+
+				// IMAGE (if available)
+				const raw = book.imageUrl;
+				let src = null;
+				if (raw) {
+					if (raw.startsWith("http") || raw.startsWith("/book_imgs/")) {
+						src = raw;
+					} else {
+						src = "/book_imgs/" + raw;
+					}
+				}
+
+				if (src) {
+					const img = document.createElement("img");
+					img.src = src;
+					img.alt = book.title + " cover";
+					card.appendChild(img);
+				} else {
+					// spacer if no image so layout stays nice
+					const placeholder = document.createElement("div");
+					placeholder.style.width = "90px";
+					card.appendChild(placeholder);
+				}
+
+				// INFO
+				const info = document.createElement("div");
+				info.className = "cart-info";
+
+				const titleEl = document.createElement("h3");
+				titleEl.className = "cart-title";
+				titleEl.textContent = book.title;
+				info.appendChild(titleEl);
+
+				const authorEl = document.createElement("p");
+				authorEl.className = "cart-author";
+				authorEl.textContent = "by " + book.author;
+				info.appendChild(authorEl);
+
+				const isbnEl = document.createElement("p");
+				isbnEl.className = "cart-isbn";
+				isbnEl.textContent = "ISBN: " + book.isbn;
+				info.appendChild(isbnEl);
+
+				// PRICE / QTY / LINE TOTAL / REMOVE
+				const meta = document.createElement("div");
+				meta.className = "cart-meta";
+
+				const priceEl = document.createElement("span");
+				priceEl.className = "price-label";
+				priceEl.textContent = "$" + Number(book.price).toFixed(2);
+				meta.appendChild(priceEl);
+
+				const qtyGroup = document.createElement("div");
+				qtyGroup.className = "qty-group";
+
+				const qtyLabel = document.createElement("span");
+				qtyLabel.textContent = "Qty:";
+				qtyGroup.appendChild(qtyLabel);
+
+				const qtyInput = document.createElement("input");
+				qtyInput.type = "number";
+				qtyInput.min = "1";
+				qtyInput.value = book.quantity;
+				qtyInput.addEventListener("change", () => {
+					let newQty = parseInt(qtyInput.value, 10);
+					if (!newQty || newQty < 1) {
+						newQty = 1;
+						qtyInput.value = "1";
+					}
+					updateQuantity(book.isbn, newQty);
+				});
+				qtyGroup.appendChild(qtyInput);
+
+				meta.appendChild(qtyGroup);
+
+				const lineTotalVal = Number(book.price) * Number(book.quantity || 1);
+				const lineTotalEl = document.createElement("span");
+				lineTotalEl.className = "line-total";
+				lineTotalEl.textContent = "$" + lineTotalVal.toFixed(2);
+				meta.appendChild(lineTotalEl);
+
+				const removeBtn = document.createElement("button");
+				removeBtn.className = "remove-btn";
+				removeBtn.textContent = "Remove";
+				removeBtn.onclick = () => removeItem(book.isbn);
+				meta.appendChild(removeBtn);
+
+				info.appendChild(meta);
+				card.appendChild(info);
+				container.appendChild(card);
+
+				subtotal += lineTotalVal;
+				totalItems += Number(book.quantity || 1);
+			});
+
+			itemCountEl.textContent = totalItems;
+			subtotalEl.textContent = subtotal.toFixed(2);
+			totalEl.textContent = subtotal.toFixed(2); // if you want tax, change here
+		}
+
+		function updateQuantity(isbn, quantity) {
+			fetch(`/api/cart/${userId}/update`, {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ isbn, quantity }),
+			})
+				.then(res => res.json())
+				.then(data => {
+					if (data.success) {
+						cartBooks = data.cart.books || [];
+						renderCart();
+					} else {
+						alert("Failed to update quantity: " + data.error);
+					}
+				})
+				.catch(err => alert("Error: " + err));
+		}
+
+		function removeItem(isbn) {
+			fetch(`/api/cart/${userId}/remove/${encodeURIComponent(isbn)}`, {
+				method: "DELETE",
+			})
+				.then(res => res.json())
+				.then(data => {
+					if (data.success) {
+						cartBooks = data.cart.books || [];
+						renderCart();
+					} else {
+						alert("Failed to remove item: " + data.error);
+					}
+				})
+				.catch(err => alert("Error: " + err));
+		}
+
+		function clearCart() {
+			if (!confirm("Are you sure you want to clear your cart?")) return;
+
+			fetch(`/api/cart/${userId}/clear`, {
+				method: "DELETE",
+			})
+				.then(res => res.json())
+				.then(data => {
+					if (data.success) {
+						cartBooks = [];
+						renderCart();
+					} else {
+						alert("Failed to clear cart: " + data.error);
+					}
+				})
+				.catch(err => alert("Error: " + err));
+		}
+
+		function checkout() {
+			if (cartBooks.length === 0) {
+				alert("Your cart is empty.");
+				return;
+			}
+			alert("Thank you for your purchase! (Demo checkout — no real payment.)");
+			clearCart();
+		}
+
+		loadCart();
+	</script>
+
+</body>
+
+</html>

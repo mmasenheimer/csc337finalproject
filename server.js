@@ -1,6 +1,7 @@
 const express = require("express");
+const path = require("path");
 const { connectDB, getDB, client } = require("./db");
-const { attemptLogin, getLastUserId, checkForExisting, createAccount } = require("./services/user");
+const { attemptLogin, checkForExisting, createAccount } = require("./services/user");
 
 const {
   getUserCart,
@@ -22,31 +23,89 @@ const {
 const app = express();
 const PORT = 3030;
 
-// Middleware
-app.use(express.json());
-app.use('/book_imgs', express.static('book_imgs')); 
+// ---------- DEFAULT BOOKS FOR SEEDING ----------
+// These now match the ORIGINAL books from seed.js
+const defaultBooks = [
+  {
+    isbn: "978-0-13-468599-1",
+    title: "Clean Code",
+    author: "Robert C. Martin",
+    price: 42.99,
+  },
+  {
+    isbn: "978-0-135-95705-9",
+    title: "The Pragmatic Programmer",
+    author: "David Thomas, Andrew Hunt",
+    price: 49.99,
+  },
+  {
+    isbn: "978-0-596-52068-7",
+    title: "JavaScript: The Good Parts",
+    author: "Douglas Crockford",
+    price: 29.99,
+  },
+  {
+    isbn: "978-1-449-33558-8",
+    title: "Learning JavaScript Design Patterns",
+    author: "Addy Osmani",
+    price: 34.99,
+  },
+  {
+    isbn: "978-0-201-63361-0",
+    title: "Design Patterns",
+    author: "Erich Gamma, Richard Helm",
+    price: 54.99,
+  },
+];
 
-// ============ PAGES ============
+// Ensure default books exist if collection is empty
+async function ensureSeedBooks(db) {
+  const count = await db.collection("books").countDocuments();
+  if (count === 0) {
+    await db.collection("books").insertMany(defaultBooks);
+    console.log("Seeded default books into database.");
+  } else {
+    console.log(`Books collection already has ${count} documents. Skipping seed.`);
+  }
+}
+
+// ---------- MIDDLEWARE ----------
+app.use(express.json());
+app.use("/book_imgs", express.static(path.join(__dirname, "book_imgs")));
+
+// ---------- PAGE ROUTES ----------
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/login.html");
+  res.sendFile(path.join(__dirname, "login.html"));
 });
 
 app.get("/home", (req, res) => {
-  res.sendFile(__dirname + "/home.html");
+  res.sendFile(path.join(__dirname, "home.html"));
 });
 
 app.get("/create_account", (req, res) => {
-  res.sendFile(__dirname + "/create_account.html");
+  res.sendFile(path.join(__dirname, "create_account.html"));
 });
 
 app.get("/products", (req, res) => {
-  res.sendFile(__dirname + "/products.html")
+  res.sendFile(path.join(__dirname, "products.html"));
 });
 
-// ============ AUTH ENDPOINTS ============
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "admin.html"));
+});
 
-//attempt login
+app.get("/checkout", (req, res) => {
+  res.sendFile(path.join(__dirname, "cart.html"));
+});
+
+app.get("/profile", (req, res) => {
+  res.sendFile(path.join(__dirname, "profile.html"));
+});
+
+// ---------- AUTH ENDPOINTS ----------
+
+// Attempt login
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -76,28 +135,27 @@ app.post("/login", async (req, res) => {
   }
 });
 
-//attempt account creation
+// Create account
 app.post("/create_account", async (req, res) => {
   const { name, email, password } = req.body;
-  const db = getDB(); 
+  const db = getDB();
 
   try {
     const existing = await checkForExisting(db, email);
-    // check if email already exists
+
     if (existing) {
       return res.status(401).json({
         success: false,
         error: "Account already exists",
       });
     }
-    // Otherwise create the account
+
     try {
       await createAccount(db, name, email, password);
       return res.json({
         success: true,
         message: "Account created successfully",
       });
-
     } catch (err) {
       return res.status(500).json({
         success: false,
@@ -112,8 +170,7 @@ app.post("/create_account", async (req, res) => {
   }
 });
 
-
-// ============ BOOK ENDPOINTS ============
+// ---------- BOOK ENDPOINTS ----------
 
 // Get all books
 app.get("/api/books", async (req, res) => {
@@ -175,7 +232,7 @@ app.delete("/api/books/:isbn", async (req, res) => {
   }
 });
 
-// ============ CART ENDPOINTS ============
+// ---------- CART ENDPOINTS ----------
 
 // Get user's cart
 app.get("/api/cart/:userId", async (req, res) => {
@@ -255,10 +312,12 @@ app.get("/api/cart/:userId/total", async (req, res) => {
   }
 });
 
-// ============ SERVER STARTUP ============
+// ---------- SERVER STARTUP ----------
 
-// Start server
-connectDB().then(() => {
+connectDB().then(async () => {
+  const db = getDB();
+  await ensureSeedBooks(db); // seed default books if needed
+
   app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
   });

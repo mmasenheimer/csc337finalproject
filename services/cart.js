@@ -1,15 +1,17 @@
 // carts.js file - This file houses cart management endpoints
 
-// Ge the user's cart
-async function getUserCart(db, userId) {
-  // Convert userid strign to objectid for mongoDB query
+const { getBookByISBN } = require("./book");
 
-  let cart = await db.collection("carts").findOne({ userId: parseInt(userId) });
+// Get the user's cart
+async function getUserCart(db, userId) {
+  const numericId = parseInt(userId);
+
+  let cart = await db.collection("carts").findOne({ userId: numericId });
 
   // If the cart doesn't exist upon function call, create an empty new one
   if (!cart) {
     cart = {
-      userId: parseInt(userId),
+      userId: numericId,
       books: [],
     };
     await db.collection("carts").insertOne(cart);
@@ -20,8 +22,10 @@ async function getUserCart(db, userId) {
 
 // Add a book to the cart
 async function addToCart(db, userId, bookData) {
-  const { isbn, quantity = 1 } = bookData;
+  const numericId = parseInt(userId);
+  const { isbn, quantity = 1, imageUrl } = bookData;
 
+  // Look up the book in the books collection
   const book = await getBookByISBN(db, isbn);
 
   // Make sure the book requested actually exists
@@ -29,7 +33,7 @@ async function addToCart(db, userId, bookData) {
     throw new Error("Book not found");
   }
 
-  const cart = await getUserCart(db, userId);
+  const cart = await getUserCart(db, numericId);
 
   // Check if the book is already in the cart, update quantity as needed
   const existingBookIndex = cart.books.findIndex((b) => b.isbn === isbn);
@@ -44,13 +48,14 @@ async function addToCart(db, userId, bookData) {
       title: book.title,
       author: book.author,
       price: book.price,
+      imageUrl: book.imageUrl || imageUrl || null,
       quantity: quantity,
     });
   }
 
   await db
     .collection("carts")
-    .updateOne({ userId: parseInt(userId) }, { $set: { books: cart.books } });
+    .updateOne({ userId: numericId }, { $set: { books: cart.books } });
 
   return cart;
 }
@@ -105,13 +110,18 @@ async function getCartTotal(db, userId) {
   const cart = await getUserCart(db, userId);
 
   const total = cart.books.reduce((sum, book) => {
-    return sum + book.price * book.quantity;
+    const price = Number(book.price) || 0;
+    const qty = Number(book.quantity) || 0;
+    return sum + price * qty;
   }, 0);
 
   return {
     subtotal: total,
     total: total,
-    itemCount: cart.books.reduce((sum, book) => sum + book.quantity, 0),
+    itemCount: cart.books.reduce(
+      (sum, book) => sum + (Number(book.quantity) || 0),
+      0
+    ),
   };
 }
 

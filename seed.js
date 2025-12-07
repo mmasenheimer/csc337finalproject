@@ -21,30 +21,35 @@ async function seedDatabase() {
         title: "Clean Code",
         author: "Robert C. Martin",
         price: 42.99,
+        imageUrl: "no_cover_available.jpg"
       },
       {
         isbn: "978-0-135-95705-9",
         title: "The Pragmatic Programmer",
         author: "David Thomas, Andrew Hunt",
         price: 49.99,
+        imageUrl: "no_cover_available.jpg"
       },
       {
         isbn: "978-0-596-52068-7",
         title: "JavaScript: The Good Parts",
         author: "Douglas Crockford",
         price: 29.99,
+        imageUrl: "no_cover_available.jpg"
       },
       {
         isbn: "978-1-449-33558-8",
         title: "Learning JavaScript Design Patterns",
         author: "Addy Osmani",
         price: 34.99,
+        imageUrl: "no_cover_available.jpg"
       },
       {
         isbn: "978-0-201-63361-0",
         title: "Design Patterns",
         author: "Erich Gamma, Richard Helm",
         price: 54.99,
+        imageUrl: "no_cover_available.jpg"
       },
     ];
 
