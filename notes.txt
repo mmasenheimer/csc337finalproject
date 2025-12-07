@@ -1,5 +1,5 @@
 User should be prompted with login page upon loading the site
-
+git
 If user does not have account present in database, he should be able to input his information, and create one,
 which will persist to db. 
 
