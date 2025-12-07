@@ -3,7 +3,7 @@ function attemptLogin(db, email, password) {
 }
 
 //This function exists to get the most recent userID within the db. So creating new accounts will +1 the last entered
-//sort by asc then grab first entry
+//sort by desc then grab first entry
 async function getLastUserId(db){
   const users = await db.collection("users")
     .find({})

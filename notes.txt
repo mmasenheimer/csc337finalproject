@@ -48,6 +48,4 @@ CART:
 
 Added seed.js file (populates database with sample data (useful for testing))
 
-- TODO: Need to add the "book" module to satisfy minimum of 3 interconnected modules with db collection
-
 --------------------------------------

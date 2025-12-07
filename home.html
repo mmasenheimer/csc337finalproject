@@ -8,10 +8,12 @@
   <p>You have successfully logged in.</p>
   <button id="logoutBtn">Logout</button>
 
+   <a href = "products">View Products </a>
   <script>
     const userId = localStorage.getItem('userId');
     const userName = localStorage.getItem('userName');
-    
+    console.log("userId" + userId)
+    console.log("userName" + userName)
     if (!userId || !userName) {
       window.location.href = '/';
     } else {
@@ -19,6 +21,7 @@
     
       console.log('User ID:', userId);
     }
+
 
     document.getElementById('logoutBtn').addEventListener('click', () => {
       localStorage.removeItem('userId');

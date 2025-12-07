@@ -59,52 +59,61 @@ db.createCollection("books", {
         title: { bsonType: "string" },
         author: { bsonType: "string" },
         price: { bsonType: "double" },
+        imageUrl : {bsonType : "string"}
       },
     },
   },
 });
+
 const bookList = [
   {
     isbn: "978-0-141-43951-8",
     title: "1984",
     author: "George Orwell",
-    price: 16.5,
+    price: 16.99,
+    imageUrl: "/book_imgs/1984.jpg"
   },
   {
     isbn: "978-0-544-27299-6",
     title: "The Hobbit",
     author: "J.R.R. Tolkien",
     price: 21.99,
+    imageUrl: "/book_imgs/hobbit.jpg"
   },
   {
     isbn: "978-0-375-70667-7",
     title: "No Country for Old Men",
     author: "Cormac McCarthy",
     price: 15.99,
+    imageUrl: "/book_imgs/no country.jpg"
   },
   {
     isbn: "978-0-307-74365-9",
     title: "The Stand",
     author: "Stephen King",
     price: 18.99,
+    imageUrl: "/book_imgs/the stand.jpg"
   },
   {
     isbn: "978-0-7653-7654-2",
     title: "Dune",
     author: "Frank Herbert",
     price: 19.99,
+    imageUrl: "/book_imgs/dune.jpg"
   },
   {
     isbn: "978-0-143-03943-3",
     title: "The Grapes of Wrath",
     author: "John Steinbeck",
-    price: 17.5,
+    price: 17.99,
+    imageUrl: "/book_imgs/grapes.jpg"
   },
   {
     isbn: "978-0-062-31609-6",
     title: "The Martian",
     author: "Andy Weir",
     price: 14.99,
+    imageUrl: "/book_imgs/martian.jpg"
   },
 ];
 

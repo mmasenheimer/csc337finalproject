@@ -24,6 +24,7 @@ const PORT = 3030;
 
 // Middleware
 app.use(express.json());
+app.use('/book_imgs', express.static('book_imgs')); 
 
 // ============ PAGES ============
 
@@ -37,6 +38,10 @@ app.get("/home", (req, res) => {
 
 app.get("/create_account", (req, res) => {
   res.sendFile(__dirname + "/create_account.html");
+});
+
+app.get("/products", (req, res) => {
+  res.sendFile(__dirname + "/products.html")
 });
 
 // ============ AUTH ENDPOINTS ============
@@ -74,7 +79,7 @@ app.post("/login", async (req, res) => {
 //attempt account creation
 app.post("/create_account", async (req, res) => {
   const { name, email, password } = req.body;
-  const db = getDB(); // however you get your DB instance
+  const db = getDB(); 
 
   try {
     const existing = await checkForExisting(db, email);
