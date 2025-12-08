@@ -72,6 +72,17 @@
       background-color: #ff7b3a;
     }
 
+    #adminNavBtn {
+      background: none;
+      border: none;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: inherit;
+      padding: 0;
+    }
+
+
     #adminMsg {
       margin-top: 6px;
       font-size: 14px;
@@ -171,14 +182,13 @@
 </head>
 
 <body>
-
   <!-- NAVBAR -->
   <div class="navbar">
     <a class="nav-item" href="/home">Home</a>
     <a class="nav-item" href="/products">Products</a>
     <a class="nav-item" href="/checkout">Cart</a>
     <a class="nav-item" href="/profile">Profile</a>
-    <span class="nav-item" id="adminNavBtn">Admin</span>
+    <button class="nav-item" id="adminNavBtn" type="button">Admin</button>
   </div>
 
   <!-- ADMIN DROPDOWN -->
@@ -205,13 +215,23 @@
     const adminBtn   = document.getElementById('adminNavBtn');
     const adminPanel = document.getElementById('adminPanel');
     const adminMsg   = document.getElementById('adminMsg');
+    const adminBox = document.getElementById('adminCode');
+    const adminLoginBtn = document.getElementById('adminLoginBtn');
 
-    adminBtn.addEventListener("click", () => {
-      adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
-      adminMsg.textContent = "";
-      adminMsg.style.color = "";
-      document.getElementById('adminCode').value = '';
-    });
+    function toggleAdminPanel() {
+        adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
+        adminMsg.textContent = "";
+        adminMsg.style.color = "";
+        document.getElementById("adminCode").value = "";
+      }
+      adminBtn.addEventListener("click", toggleAdminPanel);
+
+      adminBox.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          adminLoginBtn.click();
+        }
+      });
+
 
     document.getElementById('adminLoginBtn').addEventListener('click', () => {
       const code = document.getElementById('adminCode').value.trim();
