@@ -257,7 +257,7 @@ app.post("/api/books", upload.single("image"), async (req, res) => {
       isbn: req.body.isbn,
       title: req.body.title,
       author: req.body.author,
-      price: parseFloat(req.body.price),
+      price: req.body.price !== "" ? parseFloat(req.body.price) : undefined,
     };
     if (req.file) {
       bookData.imageUrl = `/book_imgs/${req.file.filename}`;

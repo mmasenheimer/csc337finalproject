@@ -249,7 +249,10 @@
 			formData.append("isbn", data.isbn);
 			formData.append("title", data.title);
 			formData.append("author", data.author);
-			formData.append("price", data.price);
+			if (data.price !== "") {
+    			formData.append("price", data.price);
+			}
+			console.log(formData);
 			
 			if (imageFile) {
 				formData.append("image", imageFile);
@@ -287,17 +290,20 @@
 					}
 				});
 		}
+		//bug with updating fields, need to check first if they arent populated.
 
 		async function updateBook() {
 			const data = getFormData();
 			if (!data.isbn) return setAdminMsg("Enter ISBN to update.", "red");
-
 			const formData = new FormData();
 			formData.append("isbn", data.isbn);
 			formData.append("title", data.title);
 			formData.append("author", data.author);
-			formData.append("price", data.price);
-
+			if (price != undefined){
+				formData.append("price", data.price);
+			}
+			
+			
 			const imageFile = document.getElementById("imageFile").files[0];
 			if (imageFile) {
 				formData.append("image", imageFile);
@@ -346,6 +352,6 @@
 		}
 	</script>
 
-</body>
+</body> 
 
 </html>

@@ -28,6 +28,7 @@ async function addBook(db, bookData) {
     price: parseFloat(price),
     imageUrl: imageUrl
   };
+  
 
   await db.collection("books").insertOne(book);
   return book;
@@ -40,7 +41,13 @@ async function updateBook(db, isbn, updateData) {
   const updates = {};
   if (title !== undefined) updates.title = title;
   if (author !== undefined) updates.author = author;
-  if (price !== undefined) updates.price = parseFloat(price);
+  if (
+    updateData.price !== undefined &&
+    updateData.price !== "" &&
+    !isNaN(updateData.price)
+  ) {
+    updates.price = parseFloat(updateData.price);
+  }
   if (imageUrl !== undefined) updates.imageUrl = imageUrl;
 
   const result = await db
