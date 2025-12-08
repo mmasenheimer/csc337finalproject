@@ -108,14 +108,15 @@ const defaultBooks = [
 // Ensure default books exist if collection is empty
 async function ensureSeedBooks(db) {
   const count = await db.collection("books").countDocuments();
-  if (count === 0) {
-    await db.collection("books").insertMany(defaultBooks);
-    console.log("Seeded default books into database.");
-  } else {
-    console.log(
-      `Books collection already has ${count} documents. Skipping seed.`
-    );
-  }
+  // if (count === 0) {
+  await db.collection("books").insertMany(defaultBooks);
+  //   console.log("Seeded default books into database.");
+  // }
+  // else {
+  console.log(
+    `Books collection already has ${count} documents. Skipping seed.`
+  );
+  //}
 }
 
 // ---------- MIDDLEWARE ----------
