@@ -1,250 +1,251 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
 
-<head>
-	<meta charset="UTF-8">
-	<title>Admin Dashboard</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #f5f5f5;
+      }
 
-	<style>
-		body {
-			margin: 0;
-			font-family: Arial, Helvetica, sans-serif;
-			background-color: #f5f5f5;
-		}
+      /* NAV BAR */
+      .navbar {
+        position: fixed;
+        top: 0;
+        right: 0;
+        padding: 15px 20px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        background: rgba(255, 153, 102, 0.9);
+        backdrop-filter: blur(4px);
+        border-bottom-left-radius: 10px;
+        z-index: 1000;
+      }
 
-		/* NAV BAR */
-		.navbar {
-			position: fixed;
-			top: 0;
-			right: 0;
-			padding: 15px 20px;
-			display: flex;
-			gap: 20px;
-			align-items: center;
-			background: rgba(255, 153, 102, 0.90);
-			backdrop-filter: blur(4px);
-			border-bottom-left-radius: 10px;
-			z-index: 1000;
-		}
+      .nav-item {
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+      }
 
-		.nav-item {
-			color: white;
-			font-weight: bold;
-			cursor: pointer;
-			text-decoration: none;
-		}
+      .nav-item:hover {
+        text-decoration: underline;
+      }
 
-		.nav-item:hover {
-			text-decoration: underline;
-		}
+      /* MAIN CONTENT BOX */
+      .container {
+        max-width: 1000px;
+        margin: 120px auto 40px auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        padding: 25px;
+      }
 
-		/* MAIN CONTENT BOX */
-		.container {
-			max-width: 1000px;
-			margin: 120px auto 40px auto;
-			background: white;
-			border-radius: 10px;
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-			padding: 25px;
-		}
+      h1 {
+        text-align: center;
+        margin-bottom: 20px;
+      }
 
-		h1 {
-			text-align: center;
-			margin-bottom: 20px;
-		}
+      /* GRID LAYOUT */
+      .admin-grid {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 30px;
+        margin-top: 20px;
+      }
 
-		/* GRID LAYOUT */
-		.admin-grid {
-			display: grid;
-			grid-template-columns: 1.2fr 1fr;
-			gap: 30px;
-			margin-top: 20px;
-		}
+      /* LEFT SIDE PANEL */
+      .admin-panel label {
+        display: block;
+        margin-top: 10px;
+        margin-bottom: 4px;
+        font-weight: bold;
+      }
 
-		/* LEFT SIDE PANEL */
-		.admin-panel label {
-			display: block;
-			margin-top: 10px;
-			margin-bottom: 4px;
-			font-weight: bold;
-		}
+      .admin-panel input {
+        width: 100%;
+        padding: 7px;
+        border-radius: 5px;
+        border: 1px solid #aaa;
+        margin-bottom: 10px;
+      }
 
-		.admin-panel input {
-			width: 100%;
-			padding: 7px;
-			border-radius: 5px;
-			border: 1px solid #aaa;
-			margin-bottom: 10px;
-		}
+      .admin-panel button {
+        padding: 8px 12px;
+        border-radius: 6px;
+        border: none;
+        background-color: #ff9966;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        margin-right: 8px;
+        margin-top: 5px;
+      }
 
-		.admin-panel button {
-			padding: 8px 12px;
-			border-radius: 6px;
-			border: none;
-			background-color: #ff9966;
-			color: white;
-			font-weight: bold;
-			cursor: pointer;
-			margin-right: 8px;
-			margin-top: 5px;
-		}
+      .admin-panel button:hover {
+        background-color: #ff7b3a;
+      }
 
-		.admin-panel button:hover {
-			background-color: #ff7b3a;
-		}
+      #adminMsg {
+        margin-top: 10px;
+        font-weight: bold;
+      }
 
-		#adminMsg {
-			margin-top: 10px;
-			font-weight: bold;
-		}
+      /* RIGHT SIDE BOOK LIST */
+      #books {
+        max-height: 500px;
+        overflow-y: auto;
+        padding-left: 10px;
+        border-left: 2px solid #eee;
+      }
 
-		/* RIGHT SIDE BOOK LIST */
-		#books {
-			max-height: 500px;
-			overflow-y: auto;
-			padding-left: 10px;
-			border-left: 2px solid #eee;
-		}
+      .book-card {
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 12px;
+        background: #fafafa;
+      }
 
-		.book-card {
-			border: 1px solid #ccc;
-			border-radius: 8px;
-			padding: 10px;
-			margin-bottom: 12px;
-			background: #fafafa;
-		}
+      .book-card h3 {
+        margin: 0 0 4px 0;
+      }
 
-		.book-card h3 {
-			margin: 0 0 4px 0;
-		}
+      .book-card p {
+        margin: 2px 0;
+      }
+    </style>
+  </head>
 
-		.book-card p {
-			margin: 2px 0;
-		}
-	</style>
-</head>
+  <body>
+    <!-- TOP NAV BAR -->
+    <div class="navbar">
+      <a class="nav-item" href="/home">Home</a>
+      <a class="nav-item" href="/products">Products</a>
+      <a class="nav-item" href="/checkout">Cart</a>
+      <a class="nav-item" href="/profile">Profile</a>
+    </div>
 
-<body>
+    <!-- CONTENT -->
+    <div class="container">
+      <h1>Admin Dashboard</h1>
 
-	<!-- TOP NAV BAR -->
-	<div class="navbar">
-		<a class="nav-item" href="/home">Home</a>
-		<a class="nav-item" href="/products">Products</a>
-		<a class="nav-item" href="/checkout">Cart</a>
-		<a class="nav-item" href="/profile">Profile</a>
-	</div>
+      <div class="admin-grid">
+        <!-- LEFT SIDE: ADMIN FORM -->
+        <div class="admin-panel">
+          <h2>Manage Books</h2>
 
-	<!-- CONTENT -->
-	<div class="container">
-		<h1>Admin Dashboard</h1>
+          <label>ISBN:</label>
+          <input id="isbn" type="text" />
 
-		<div class="admin-grid">
+          <label>Title:</label>
+          <input id="title" type="text" />
 
-			<!-- LEFT SIDE: ADMIN FORM -->
-			<div class="admin-panel">
-				<h2>Manage Books</h2>
+          <label>Author:</label>
+          <input id="author" type="text" />
 
-				<label>ISBN:</label>
-				<input id="isbn" type="text">
+          <label>Price:</label>
+          <input id="price" type="number" step="0.01" />
 
-				<label>Title:</label>
-				<input id="title" type="text">
+          <label>Upload Image </label>
+          <input id="imageFile" type="file" accept="image/*" />
 
-				<label>Author:</label>
-				<input id="author" type="text">
+          <button onclick="addBook()">Add</button>
+          <button onclick="loadBook()">Load</button>
+          <button onclick="updateBook()">Update</button>
+          <button onclick="deleteBook()">Delete</button>
 
-				<label>Price:</label>
-				<input id="price" type="number" step="0.01">
+          <p id="adminMsg"></p>
+        </div>
 
-				<label>Upload Image </label>
-				<input id="imageFile" type="file" accept="image/*">
+        <!-- RIGHT SIDE: BOOK LIST -->
+        <div>
+          <h2>Current Books</h2>
+          <div id="books"></div>
+        </div>
+      </div>
+    </div>
 
-				<button onclick="addBook()">Add</button>
-				<button onclick="loadBook()">Load</button>
-				<button onclick="updateBook()">Update</button>
-				<button onclick="deleteBook()">Delete</button>
+    <script>
+      const userId = localStorage.getItem("userId");
+      if (!userId) window.location.href = "/";
 
-				<p id="adminMsg"></p>
-			</div>
+      function setAdminMsg(msg, color = "black") {
+        const adminMsg = document.getElementById("adminMsg");
+        adminMsg.textContent = msg;
+        adminMsg.style.color = color;
+      }
 
-			<!-- RIGHT SIDE: BOOK LIST -->
-			<div>
-				<h2>Current Books</h2>
-				<div id="books"></div>
-			</div>
+      // ------ RENDER BOOKS LIST ------
+      function renderBooks(books) {
+        const booksDiv = document.getElementById("books");
+        booksDiv.innerHTML = "";
 
-		</div>
-	</div>
+        books.forEach((book) => {
+          const card = document.createElement("div");
+          card.className = "book-card";
 
-	<script>
-		const userId = localStorage.getItem("userId");
-		if (!userId) window.location.href = "/";
-
-		function setAdminMsg(msg, color = "black") {
-			const adminMsg = document.getElementById("adminMsg");
-			adminMsg.textContent = msg;
-			adminMsg.style.color = color;
-		}
-
-		// ------ RENDER BOOKS LIST ------
-		function renderBooks(books) {
-			const booksDiv = document.getElementById("books");
-			booksDiv.innerHTML = "";
-
-			books.forEach(book => {
-				const card = document.createElement("div");
-				card.className = "book-card";
-
-				card.innerHTML = `
+          card.innerHTML = `
         <h3>${book.title}</h3>
         <p><strong>Author:</strong> ${book.author}</p>
         <p><strong>Price:</strong> $${book.price}</p>
         <p><strong>ISBN:</strong> ${book.isbn}</p>
-        ${book.imageUrl ? `<img src="${book.imageUrl}" alt="${book.title}" style="max-width: 200px; max-height: 150px; margin-top: 8px; border-radius: 5px;">` : ""}
+        ${
+          book.imageUrl
+            ? `<img src="${book.imageUrl}" alt="${book.title}" style="max-width: 200px; max-height: 150px; margin-top: 8px; border-radius: 5px;">`
+            : ""
+        }
       `;
 
-				booksDiv.appendChild(card);
-			});
-		}
+          booksDiv.appendChild(card);
+        });
+      }
 
-		function loadBooks() {
-			fetch('/api/books')
-				.then(res => res.json())
-				.then(data => {
-					if (data.success) {
-						renderBooks(data.books);
-					} else {
-						setAdminMsg("Could not load books", "red");
-					}
-				})
-				.catch(() => setAdminMsg("Server error loading books", "red"));
-		}
+      function loadBooks() {
+        fetch("/api/books")
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              renderBooks(data.books);
+            } else {
+              setAdminMsg("Could not load books", "red");
+            }
+          })
+          .catch(() => setAdminMsg("Server error loading books", "red"));
+      }
 
-		loadBooks();
+      loadBooks();
 
-		// ----- FORM HELPERS -----
-		function getFormData() {
-			return {
-				isbn: document.getElementById("isbn").value.trim(),
-				title: document.getElementById("title").value.trim(),
-				author: document.getElementById("author").value.trim(),
-				price: document.getElementById("price").value.trim()
-			};
-		}
+      // ----- FORM HELPERS -----
+      function getFormData() {
+        return {
+          isbn: document.getElementById("isbn").value.trim(),
+          title: document.getElementById("title").value.trim(),
+          author: document.getElementById("author").value.trim(),
+          price: document.getElementById("price").value.trim(),
+        };
+      }
 
-		function setForm(book) {
-			document.getElementById("title").value = book.title || "";
-			document.getElementById("author").value = book.author || "";
-			document.getElementById("price").value = book.price || "";
-			// Clear file input when loading a book
-			document.getElementById("imageFile").value = "";
-		}
+      function setForm(book) {
+        document.getElementById("title").value = book.title || "";
+        document.getElementById("author").value = book.author || "";
+        document.getElementById("price").value = book.price || "";
+        // Clear file input when loading a book
+        document.getElementById("imageFile").value = "";
+      }
 
-		// ----- BUTTON FUNCTIONS -----
-		async function addBook() {
-			const data = getFormData();
-			const imageFile = document.getElementById("imageFile").files[0];
+      // ----- BUTTON FUNCTIONS -----
+      async function addBook() {
+        const data = getFormData();
+        const imageFile = document.getElementById("imageFile").files[0];
 
+<<<<<<< HEAD
 			const formData = new FormData();
 			formData.append("isbn", data.isbn);
 			formData.append("title", data.title);
@@ -257,28 +258,38 @@
 			if (imageFile) {
 				formData.append("image", imageFile);
 			}
+=======
+        const formData = new FormData();
+        formData.append("isbn", data.isbn);
+        formData.append("title", data.title);
+        formData.append("author", data.author);
+        formData.append("price", data.price);
+>>>>>>> 50645e762afd3740afeb4141e3199372d76c3472
 
-			fetch('/api/books', {
-				method: "POST",
-				body: formData 
-			})
-				.then(res => res.json())
-				.then(result => {
-					if (result.success) {
-						setAdminMsg("Book added!", "green");
-						clearForm();
-						loadBooks();
-					} else {
-						setAdminMsg(result.error, "red");
-					}
-				})
-				.catch(err => setAdminMsg("Error adding book: " + err.message, "red"));
-		}
+        if (imageFile) {
+          formData.append("image", imageFile);
+        }
 
-		function loadBook() {
-			const isbn = document.getElementById("isbn").value.trim();
-			if (!isbn) return setAdminMsg("Enter ISBN to load.", "red");
+        fetch("/api/books", {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.success) {
+              setAdminMsg("Book added!", "green");
+              clearForm();
+              loadBooks();
+            } else {
+              setAdminMsg(result.error, "red");
+            }
+          })
+          .catch((err) =>
+            setAdminMsg("Error adding book: " + err.message, "red")
+          );
+      }
 
+<<<<<<< HEAD
 			fetch(`/api/books/${isbn}`)
 				.then(res => res.json())
 				.then(result => {
@@ -308,50 +319,102 @@
 			if (imageFile) {
 				formData.append("image", imageFile);
 			}
+=======
+      function loadBook() {
+        const isbn = document.getElementById("isbn").value.trim();
+        if (!isbn) return setAdminMsg("Enter ISBN to load.", "red");
 
-			fetch(`/api/books/${data.isbn}`, {
-				method: "PUT",
-				body: formData
-			})
-				.then(res => res.json())
-				.then(result => {
-					if (result.success) {
-						setAdminMsg("Book updated!", "green");
-						clearForm();
-						loadBooks();
-					} else {
-						setAdminMsg(result.error, "red");
-					}
-				})
-				.catch(err => setAdminMsg("Error updating book: " + err.message, "red"));
-		}
+        fetch(`/api/books/${isbn}`)
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.success && result.book) {
+              setForm(result.book);
+              setAdminMsg("Book loaded.", "green");
+            } else {
+              setAdminMsg("Book not found.", "red");
+            }
+          });
+      }
 
-		function deleteBook() {
-			const isbn = document.getElementById("isbn").value.trim();
-			if (!isbn) return setAdminMsg("Enter ISBN to delete.", "red");
+      async function updateBook() {
+        const data = getFormData();
+        if (!data.isbn) return setAdminMsg("Enter ISBN to update.", "red");
 
-			fetch(`/api/books/${isbn}`, { method: "DELETE" })
-				.then(res => res.json())
-				.then(result => {
-					if (result.success) {
-						setAdminMsg("Book deleted!", "green");
-						clearForm();
-						loadBooks();
-					} else {
-						setAdminMsg(result.error, "red");
-					}
-				});
-		}
+        // Only include fields that have values (check for empty string specifically)
+        const updates = {};
+        if (data.title && data.title !== "") updates.title = data.title;
+        if (data.author && data.author !== "") updates.author = data.author;
+        if (data.price && data.price !== null) updates.price = data.price;
+        console.log(data.price);
+>>>>>>> 50645e762afd3740afeb4141e3199372d76c3472
 
-		function clearForm() {
-			document.getElementById("isbn").value = "";
-			document.getElementById("title").value = "";
-			document.getElementById("author").value = "";
-			document.getElementById("price").value = "";
-			document.getElementById("imageFile").value = "";
-		}
-	</script>
+        // Check if there's anything to update
+        if (
+          Object.keys(updates).length === 0 &&
+          !document.getElementById("imageFile").files[0]
+        ) {
+          return setAdminMsg("No fields to update.", "red");
+        }
 
+        const formData = new FormData();
+
+        // Add only the fields that have values
+        Object.keys(updates).forEach((key) => {
+          formData.append(key, updates[key]);
+        });
+
+        const imageFile = document.getElementById("imageFile").files[0];
+        if (imageFile) {
+          formData.append("image", imageFile);
+        }
+
+<<<<<<< HEAD
 </body> 
+=======
+        fetch(`/api/books/${data.isbn}`, {
+          method: "PUT",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.success) {
+              setAdminMsg("Book updated!", "green");
+              clearForm();
+              loadBooks();
+            } else {
+              setAdminMsg(result.error, "red");
+            }
+          })
+          .catch((err) =>
+            setAdminMsg("Error updating book: " + err.message, "red")
+          );
+      }
+>>>>>>> 50645e762afd3740afeb4141e3199372d76c3472
 
+      function deleteBook() {
+        const isbn = document.getElementById("isbn").value.trim();
+        if (!isbn) return setAdminMsg("Enter ISBN to delete.", "red");
+
+        fetch(`/api/books/${isbn}`, { method: "DELETE" })
+          .then((res) => res.json())
+          .then((result) => {
+            if (result.success) {
+              setAdminMsg("Book deleted!", "green");
+              clearForm();
+              loadBooks();
+            } else {
+              setAdminMsg(result.error, "red");
+            }
+          });
+      }
+
+      function clearForm() {
+        document.getElementById("isbn").value = "";
+        document.getElementById("title").value = "";
+        document.getElementById("author").value = "";
+        document.getElementById("price").value = "";
+        document.getElementById("imageFile").value = "";
+      }
+    </script>
+  </body>
 </html>
