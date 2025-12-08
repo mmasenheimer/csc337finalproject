@@ -20,6 +20,7 @@
   "homepage": "https://github.com/mmasenheimer/csc337finalproject#readme",
   "dependencies": {
     "express": "^5.2.1",
-    "mongodb": "^7.0.0"
+    "mongodb": "^7.0.0",
+    "multer": "^2.0.2"
   }
 }
