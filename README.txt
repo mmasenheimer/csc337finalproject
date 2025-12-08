@@ -46,6 +46,9 @@ Users can access admin mode as follows:
 ## 5.Enter the code: 3030
 Follow the instructions below to install and set everything up:
 
+install mongodb
+install node
+
 
 
 
