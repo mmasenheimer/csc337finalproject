@@ -154,6 +154,7 @@
           // Only redirect on success
           localStorage.setItem('userId', data.user.id);
           localStorage.setItem('userName', data.user.name);
+          localStorage.setItem('usertype', data.user.type);
           window.location.href = '/home';
         } else {
           errorMessage.style.display = "block";

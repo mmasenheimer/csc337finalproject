@@ -177,6 +177,13 @@
 
     // Toggle dropdown for Admin
     adminBtn.addEventListener("click", () => {
+      //if accounts is of type admin then they should be able to bypass code input
+      //eitherwise a guest can enter the code to access admin page 
+       var curr_type = localStorage.getItem("usertype")
+       if (curr_type == "admin"){
+        window.location.href = "/admin"
+       }
+
       adminPanel.style.display = adminPanel.style.display === "block" ? "none" : "block";
       adminMsg.textContent = "";
       adminMsg.style.color = "";

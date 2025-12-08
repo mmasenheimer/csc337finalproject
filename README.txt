@@ -53,3 +53,10 @@ Follow the instructions below to install and set everything up:
 ---
 
 ### The application will run on localhost 3030
+
+Required dependencies:
+Express
+MongoDB
+Multer
+
+Run once in CL: npm install mongodb multer express

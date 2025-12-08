@@ -1,8 +1,8 @@
 const express = require("express");
 const path = require("path");
 const { connectDB, getDB, client } = require("./db");
-const { attemptLogin, checkForExisting, createAccount } = require("./services/user");
-
+const { attemptLogin, checkForExisting, createAccount, updateEmail, updatePassword, getUserById } = require("./services/user");
+const multer = require('multer')
 const {
   getUserCart,
   updateCartItemQuantity,
@@ -20,6 +20,27 @@ const {
   deleteBook,
 } = require("./services/book");
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'book_imgs/'); // save to /book_imgs 
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = `_${file.originalname}`;
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    // Only accept images
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
+    }
+  }
+});
 const app = express();
 const PORT = 3030;
 
@@ -124,6 +145,7 @@ app.post("/login", async (req, res) => {
       user: {
         id: user.userId,
         name: user.name || user.username,
+        type: user.type
       },
     });
   } catch (error) {
@@ -200,9 +222,20 @@ app.get("/api/books/:isbn", async (req, res) => {
 });
 
 // Admin: Add new book
-app.post("/api/books", async (req, res) => {
+
+app.post("/api/books", upload.single('image'), async (req, res) => {
   try {
-    const book = await addBook(getDB(), req.body);
+    const bookData = {
+      isbn: req.body.isbn,
+      title: req.body.title,
+      author: req.body.author,
+      price: parseFloat(req.body.price)
+    };
+    if (req.file) {
+      bookData.imageUrl = `/book_imgs/${req.file.filename}`;
+    }
+    
+    const book = await addBook(getDB(), bookData);
     res.status(201).json({ success: true, book });
   } catch (error) {
     console.error("Error adding book:", error);
@@ -211,9 +244,19 @@ app.post("/api/books", async (req, res) => {
 });
 
 // Admin: Update book
-app.put("/api/books/:isbn", async (req, res) => {
+app.put("/api/books/:isbn", upload.single('image'), async (req, res) => {
   try {
-    const book = await updateBook(getDB(), req.params.isbn, req.body);
+    const bookData = {
+      isbn: req.body.isbn,
+      title: req.body.title,
+      author: req.body.author,
+      price: parseFloat(req.body.price) 
+    };
+    if (req.file) {
+      bookData.imageUrl = `/book_imgs/${req.file.filename}`;
+    }
+    
+    const book = await updateBook(getDB(), req.params.isbn, bookData);
     res.json({ success: true, book });
   } catch (error) {
     console.error("Error updating book:", error);
@@ -311,6 +354,64 @@ app.get("/api/cart/:userId/total", async (req, res) => {
       .json({ success: false, error: "Failed to calculate total" });
   }
 });
+// ---------- PROFILE ENDPOINTS ----------
+app.get("/api/users/:userId", async (req, res) => {
+  try {
+    const db = getDB();
+    const userId = parseInt(req.params.userId);
+    const user = await getUserById(db, userId);
+
+    if (!user) {
+      return res.status(404).json({ success: false, error: "User not found" });
+    }
+
+    res.json({
+      success: true,
+      user: {
+        id: user.userId,
+        name: user.name,
+        email: user.email,
+        type: user.type
+      },
+    });
+  } catch (err) {
+    console.error("GET /api/users/:userId error:", err);
+    res.status(500).json({ success: false, error: "Server error" });
+  }
+});
+
+// Update email
+app.put("/api/users/:userId/email", async (req, res) => {
+  try {
+    const db = getDB();
+    const userId = parseInt(req.params.userId);
+    const { newEmail } = req.body;
+
+    await updateEmail(db, userId, newEmail);
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("PUT /api/users/:userId/email error:", err);
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
+// Update password
+app.put("/api/users/:userId/password", async (req, res) => {
+  try {
+    const db = getDB();
+    const userId = parseInt(req.params.userId);
+    const { oldPassword, newPassword } = req.body;
+
+    await updatePassword(db, userId, oldPassword, newPassword);
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("PUT /api/users/:userId/password error:", err);
+    res.status(400).json({ success: false, error: err.message });
+  }
+});
+
 
 // ---------- SERVER STARTUP ----------
 
