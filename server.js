@@ -1,8 +1,15 @@
 const express = require("express");
 const path = require("path");
 const { connectDB, getDB, client } = require("./db");
-const { attemptLogin, checkForExisting, createAccount, updateEmail, updatePassword, getUserById } = require("./services/user");
-const multer = require('multer')
+const {
+  attemptLogin,
+  checkForExisting,
+  createAccount,
+  updateEmail,
+  updatePassword,
+  getUserById,
+} = require("./services/user");
+const multer = require("multer");
 const {
   getUserCart,
   updateCartItemQuantity,
@@ -22,24 +29,24 @@ const {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'book_imgs/'); // save to /book_imgs 
+    cb(null, "book_imgs/"); // save to /book_imgs
   },
   filename: (req, file, cb) => {
     const uniqueName = `_${file.originalname}`;
     cb(null, uniqueName);
-  }
+  },
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
     // Only accept images
-    if (file.mimetype.startsWith('image/')) {
+    if (file.mimetype.startsWith("image/")) {
       cb(null, true);
     } else {
-      cb(new Error('Only image files are allowed!'), false);
+      cb(new Error("Only image files are allowed!"), false);
     }
-  }
+  },
 });
 const app = express();
 const PORT = 3030;
@@ -48,34 +55,53 @@ const PORT = 3030;
 // These now match the ORIGINAL books from seed.js
 const defaultBooks = [
   {
-    isbn: "978-0-13-468599-1",
-    title: "Clean Code",
-    author: "Robert C. Martin",
-    price: 42.99,
+    isbn: "978-0-141-43951-8",
+    title: "1984",
+    author: "George Orwell",
+    price: 16.99,
+    imageUrl: "/book_imgs/1984.jpg",
   },
   {
-    isbn: "978-0-135-95705-9",
-    title: "The Pragmatic Programmer",
-    author: "David Thomas, Andrew Hunt",
-    price: 49.99,
+    isbn: "978-0-544-27299-6",
+    title: "The Hobbit",
+    author: "J.R.R. Tolkien",
+    price: 21.99,
+    imageUrl: "/book_imgs/hobbit.jpg",
   },
   {
-    isbn: "978-0-596-52068-7",
-    title: "JavaScript: The Good Parts",
-    author: "Douglas Crockford",
-    price: 29.99,
+    isbn: "978-0-375-70667-7",
+    title: "No Country for Old Men",
+    author: "Cormac McCarthy",
+    price: 15.99,
+    imageUrl: "/book_imgs/no country.jpg",
   },
   {
-    isbn: "978-1-449-33558-8",
-    title: "Learning JavaScript Design Patterns",
-    author: "Addy Osmani",
-    price: 34.99,
+    isbn: "978-0-307-74365-9",
+    title: "The Stand",
+    author: "Stephen King",
+    price: 18.99,
+    imageUrl: "/book_imgs/the stand.jpg",
   },
   {
-    isbn: "978-0-201-63361-0",
-    title: "Design Patterns",
-    author: "Erich Gamma, Richard Helm",
-    price: 54.99,
+    isbn: "978-0-7653-7654-2",
+    title: "Dune",
+    author: "Frank Herbert",
+    price: 19.99,
+    imageUrl: "/book_imgs/dune.jpg",
+  },
+  {
+    isbn: "978-0-143-03943-3",
+    title: "The Grapes of Wrath",
+    author: "John Steinbeck",
+    price: 17.99,
+    imageUrl: "/book_imgs/grapes.jpg",
+  },
+  {
+    isbn: "978-0-062-31609-6",
+    title: "The Martian",
+    author: "Andy Weir",
+    price: 14.99,
+    imageUrl: "/book_imgs/martian.jpg",
   },
 ];
 
@@ -86,7 +112,9 @@ async function ensureSeedBooks(db) {
     await db.collection("books").insertMany(defaultBooks);
     console.log("Seeded default books into database.");
   } else {
-    console.log(`Books collection already has ${count} documents. Skipping seed.`);
+    console.log(
+      `Books collection already has ${count} documents. Skipping seed.`
+    );
   }
 }
 
@@ -145,7 +173,7 @@ app.post("/login", async (req, res) => {
       user: {
         id: user.userId,
         name: user.name || user.username,
-        type: user.type
+        type: user.type,
       },
     });
   } catch (error) {
@@ -223,18 +251,18 @@ app.get("/api/books/:isbn", async (req, res) => {
 
 // Admin: Add new book
 
-app.post("/api/books", upload.single('image'), async (req, res) => {
+app.post("/api/books", upload.single("image"), async (req, res) => {
   try {
     const bookData = {
       isbn: req.body.isbn,
       title: req.body.title,
       author: req.body.author,
-      price: parseFloat(req.body.price)
+      price: parseFloat(req.body.price),
     };
     if (req.file) {
       bookData.imageUrl = `/book_imgs/${req.file.filename}`;
     }
-    
+
     const book = await addBook(getDB(), bookData);
     res.status(201).json({ success: true, book });
   } catch (error) {
@@ -244,18 +272,18 @@ app.post("/api/books", upload.single('image'), async (req, res) => {
 });
 
 // Admin: Update book
-app.put("/api/books/:isbn", upload.single('image'), async (req, res) => {
+app.put("/api/books/:isbn", upload.single("image"), async (req, res) => {
   try {
     const bookData = {
       isbn: req.body.isbn,
       title: req.body.title,
       author: req.body.author,
-      price: parseFloat(req.body.price) 
+      price: parseFloat(req.body.price),
     };
     if (req.file) {
       bookData.imageUrl = `/book_imgs/${req.file.filename}`;
     }
-    
+
     const book = await updateBook(getDB(), req.params.isbn, bookData);
     res.json({ success: true, book });
   } catch (error) {
@@ -371,7 +399,7 @@ app.get("/api/users/:userId", async (req, res) => {
         id: user.userId,
         name: user.name,
         email: user.email,
-        type: user.type
+        type: user.type,
       },
     });
   } catch (err) {
@@ -411,7 +439,6 @@ app.put("/api/users/:userId/password", async (req, res) => {
     res.status(400).json({ success: false, error: err.message });
   }
 });
-
 
 // ---------- SERVER STARTUP ----------
 
