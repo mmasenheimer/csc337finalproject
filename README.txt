@@ -64,3 +64,7 @@ MongoDB
 Multer
 
 Run once in CL: npm install mongodb multer express
+
+to boot: 
+
+Run in terminal: node server.js

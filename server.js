@@ -105,18 +105,30 @@ const defaultBooks = [
   },
 ];
 
+const admins = [
+  {
+    userId: 1,
+    name: "Admin",
+    email: "admin@admin.com",
+    password: "admin123",
+    type: "admin",
+  },
+  {
+    userId: 2,
+    name: "Dan Smith",
+    email: "dmsith123@gmail.com",
+    password: "admin123",
+    type: "admin",
+  },
+];
+
 // Ensure default books exist if collection is empty
 async function ensureSeedBooks(db) {
   const count = await db.collection("books").countDocuments();
-  // if (count === 0) {
+  if (count === 0) {
   await db.collection("books").insertMany(defaultBooks);
-  //   console.log("Seeded default books into database.");
-  // }
-  // else {
-  console.log(
-    `Books collection already has ${count} documents. Skipping seed.`
-  );
-  //}
+  await db.collection("users").insertMany(admins);
+  }
 }
 
 // ---------- MIDDLEWARE ----------
