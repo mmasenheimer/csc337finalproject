@@ -153,7 +153,7 @@
           <label>Price:</label>
           <input id="price" type="number" step="0.01" />
 
-          <label>Upload Image </label>
+          <label>Upload Image</label>
           <input id="imageFile" type="file" accept="image/*" />
 
           <button onclick="addBook()">Add</button>
@@ -192,16 +192,16 @@
           card.className = "book-card";
 
           card.innerHTML = `
-        <h3>${book.title}</h3>
-        <p><strong>Author:</strong> ${book.author}</p>
-        <p><strong>Price:</strong> $${book.price}</p>
-        <p><strong>ISBN:</strong> ${book.isbn}</p>
-        ${
-          book.imageUrl
-            ? `<img src="${book.imageUrl}" alt="${book.title}" style="max-width: 200px; max-height: 150px; margin-top: 8px; border-radius: 5px;">`
-            : ""
-        }
-      `;
+            <h3>${book.title}</h3>
+            <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>Price:</strong> $${book.price}</p>
+            <p><strong>ISBN:</strong> ${book.isbn}</p>
+            ${
+              book.imageUrl
+                ? `<img src="${book.imageUrl}" alt="${book.title}" style="max-width: 200px; max-height: 150px; margin-top: 8px; border-radius: 5px;">`
+                : ""
+            }
+          `;
 
           booksDiv.appendChild(card);
         });
@@ -222,7 +222,7 @@
 
       loadBooks();
 
-      // ----- FORM HELPERS -----
+      // FORM HELPERS
       function getFormData() {
         return {
           isbn: document.getElementById("isbn").value.trim(),
@@ -236,39 +236,20 @@
         document.getElementById("title").value = book.title || "";
         document.getElementById("author").value = book.author || "";
         document.getElementById("price").value = book.price || "";
-        // Clear file input when loading a book
         document.getElementById("imageFile").value = "";
       }
 
-      // ----- BUTTON FUNCTIONS -----
+      // ----- ADD BOOK -----
       async function addBook() {
         const data = getFormData();
         const imageFile = document.getElementById("imageFile").files[0];
 
-<<<<<<< HEAD
-			const formData = new FormData();
-			formData.append("isbn", data.isbn);
-			formData.append("title", data.title);
-			formData.append("author", data.author);
-			if (data.price !== "") {
-    			formData.append("price", data.price);
-			}
-			console.log(formData);
-			
-			if (imageFile) {
-				formData.append("image", imageFile);
-			}
-=======
         const formData = new FormData();
         formData.append("isbn", data.isbn);
         formData.append("title", data.title);
         formData.append("author", data.author);
-        formData.append("price", data.price);
->>>>>>> 50645e762afd3740afeb4141e3199372d76c3472
-
-        if (imageFile) {
-          formData.append("image", imageFile);
-        }
+        if (data.price !== "") formData.append("price", data.price);
+        if (imageFile) formData.append("image", imageFile);
 
         fetch("/api/books", {
           method: "POST",
@@ -289,37 +270,7 @@
           );
       }
 
-<<<<<<< HEAD
-			fetch(`/api/books/${isbn}`)
-				.then(res => res.json())
-				.then(result => {
-					if (result.success && result.book) {
-						setForm(result.book);
-						setAdminMsg("Book loaded.", "green");
-					} else {
-						setAdminMsg("Book not found.", "red");
-					}
-				});
-		}
-		//bug with updating fields, need to check first if they arent populated.
-
-		async function updateBook() {
-			const data = getFormData();
-			if (!data.isbn) return setAdminMsg("Enter ISBN to update.", "red");
-			const formData = new FormData();
-			formData.append("isbn", data.isbn);
-			formData.append("title", data.title);
-			formData.append("author", data.author);
-			if (price != undefined){
-				formData.append("price", data.price);
-			}
-			
-			
-			const imageFile = document.getElementById("imageFile").files[0];
-			if (imageFile) {
-				formData.append("image", imageFile);
-			}
-=======
+      // ----- LOAD BOOK -----
       function loadBook() {
         const isbn = document.getElementById("isbn").value.trim();
         if (!isbn) return setAdminMsg("Enter ISBN to load.", "red");
@@ -336,41 +287,28 @@
           });
       }
 
+      // ----- UPDATE BOOK -----
       async function updateBook() {
         const data = getFormData();
         if (!data.isbn) return setAdminMsg("Enter ISBN to update.", "red");
 
-        // Only include fields that have values (check for empty string specifically)
         const updates = {};
-        if (data.title && data.title !== "") updates.title = data.title;
-        if (data.author && data.author !== "") updates.author = data.author;
-        if (data.price && data.price !== null) updates.price = data.price;
-        console.log(data.price);
->>>>>>> 50645e762afd3740afeb4141e3199372d76c3472
+        if (data.title !== "") updates.title = data.title;
+        if (data.author !== "") updates.author = data.author;
+        if (data.price !== "") updates.price = data.price;
 
-        // Check if there's anything to update
-        if (
-          Object.keys(updates).length === 0 &&
-          !document.getElementById("imageFile").files[0]
-        ) {
+        const imageFile = document.getElementById("imageFile").files[0];
+
+        if (Object.keys(updates).length === 0 && !imageFile) {
           return setAdminMsg("No fields to update.", "red");
         }
 
         const formData = new FormData();
+        Object.keys(updates).forEach((key) =>
+          formData.append(key, updates[key])
+        );
+        if (imageFile) formData.append("image", imageFile);
 
-        // Add only the fields that have values
-        Object.keys(updates).forEach((key) => {
-          formData.append(key, updates[key]);
-        });
-
-        const imageFile = document.getElementById("imageFile").files[0];
-        if (imageFile) {
-          formData.append("image", imageFile);
-        }
-
-<<<<<<< HEAD
-</body> 
-=======
         fetch(`/api/books/${data.isbn}`, {
           method: "PUT",
           body: formData,
@@ -389,8 +327,8 @@
             setAdminMsg("Error updating book: " + err.message, "red")
           );
       }
->>>>>>> 50645e762afd3740afeb4141e3199372d76c3472
 
+      // ----- DELETE BOOK -----
       function deleteBook() {
         const isbn = document.getElementById("isbn").value.trim();
         if (!isbn) return setAdminMsg("Enter ISBN to delete.", "red");
@@ -408,6 +346,7 @@
           });
       }
 
+      // CLEAR FORM
       function clearForm() {
         document.getElementById("isbn").value = "";
         document.getElementById("title").value = "";

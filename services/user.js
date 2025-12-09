@@ -7,7 +7,8 @@ function attemptLogin(db, email, password) {
 
 // Get most recent userId
 async function getLastUserId(db) {
-  const users = await db.collection("users")
+  const users = await db
+    .collection("users")
     .find({})
     .sort({ userId: -1 })
     .limit(1)
@@ -60,10 +61,9 @@ async function updateEmail(db, userId, newEmail) {
     throw new Error("Email already in use");
   }
 
-  const result = await db.collection("users").updateOne(
-    { userId: userId },
-    { $set: { email: newEmail } }
-  );
+  const result = await db
+    .collection("users")
+    .updateOne({ userId: userId }, { $set: { email: newEmail } });
 
   if (result.matchedCount === 0) {
     throw new Error("User not found");
@@ -84,10 +84,9 @@ async function updatePassword(db, userId, oldPassword, newPassword) {
     throw new Error("Current password is incorrect");
   }
 
-  await db.collection("users").updateOne(
-    { userId: userId },
-    { $set: { password: newPassword } }
-  );
+  await db
+    .collection("users")
+    .updateOne({ userId: userId }, { $set: { password: newPassword } });
 
   return true;
 }
