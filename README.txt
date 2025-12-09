@@ -4,10 +4,12 @@
 - **Michael Masenheimer**
 - **Joe Grimes**
 - **Kyle Vega**
+- **Shayden Lowry**
+- **Elijah Walders**
 
 ---
 
-## 📖 Overview
+## Overview
 This is a Node.js web application built using **Express** and **MongoDB**.  
 It uses **JavaScript** and **HTML/CSS** for the frontend and **JavaScript** for the backend.
 
@@ -44,14 +46,13 @@ Users can access admin mode as follows:
 ## 3.Click "Admin" in the top-right navigation bar.
 ## 4.A dropdown appears prompting for an admin access code.
 ## 5.Enter the code: 3030
+
 Follow the instructions below to install and set everything up:
 
 install mongodb
 install node
-
-
-
-
+install multer
+install express
 
 ---
 
